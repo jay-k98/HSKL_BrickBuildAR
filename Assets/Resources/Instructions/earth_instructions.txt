@@ -1,4 +1,5 @@
 # Core_Top
+L P 3031 Titanium_metallic 1:P 4733 Black 4
 P 3031 0 0.003199999 0 180 0 0 Titanium_Metallic
 P 4733 -0.012 0.0128 0.012 180 0 0 Black
 P 4733 0.012 0.0128 0.012 180 0 0 Black
@@ -6,6 +7,7 @@ P 4733 0.012 0.0128 -0.012 180 0 0 Black
 P 4733 -0.012 0.0128 -0.012 180 0 0 Black
 I Core_Top
 # Side_East
+L P 3710 Earth_Green 1:P 3710 Earth_Blue 1:P 15573 Earth_Green 3:P 15573 Earth_Green 1:P 2420 Earth_Green 2:P 2420 Earth_Blue 2:P 4032a Earth_Green 1
 P 3710 0 0.002818186 0.012 180 0 0 Earth_Green
 P 15573 0.012 0.002800003 0.004000001 180 0 0 Earth_Green
 P 15573 0.012 0.002800001 -0.004000001 180 0 0 Earth_Green
@@ -17,17 +19,23 @@ P 2420 0.004 0.006018186 0.004000001 180 180 0 Earth_Green
 P 2420 0.004 0.006018186 -0.004000001 180 270 0 Earth_Green
 P 2420 -0.004000001 0.006018186 -0.004000001 180 0 0 Earth_Blue
 P 4032a 0 0.009218182 -2.384186E-09 180 0 0 Earth_Green
+L C Core_Bottom Side_South
 I Side_East
 C Core_Bottom 0 -0.003199999 0 0 0 0 180 90 0
 C Side_South 0 -0.01638818 0 0 0 0 180 90 0
+L C Side_East
 R InstructionLoader 0 0 0 0 90 0
 C Side_East 0.0164 -1.81818E-05 0 0 0 0 0 90 0
+L C Core_Top Side_Front
 R InstructionLoader 0 0 0 0 0 0
 C Core_Top 0 0.003199999 -2.384186E-09 0 0 0 0 0 0
 C Side_Front 0 -1.820159E-05 -0.0164 0 0 0 0 0 0
+L C Side_Back
 R InstructionLoader 0 0 0 0 -180 0
 C Side_Back 0 -1.820016E-05 0.0164 0 0 0 0 -180 0
+L C Side_West
 R InstructionLoader 0 0 0 0 -90 0
 C Side_West -0.0164 -1.81818E-05 0 0 0 0 0 -90 0
+L C Side_North
 R InstructionLoader 0 0 0 0 0 0
 C Side_North 0 0.016 -2.384186E-09 0 0 0 0 0 0

@@ -144,9 +144,37 @@ public class InstructionLoader : MonoBehaviour
                 );
             StartCoroutine(RotateTo(Comp.transform, Quaternion.Euler(RotTo)));
         }
+        else if (Step[0] == "L")
+        {
+            ClearPanel();
+            string ListStr = String.Join(' ', Step, 1, Step.Length-1);
+            string[] ListSplit = ListStr.Split(":");
+            foreach (string ListItem in ListSplit)
+            {
+                string[] ListItemSplit = ListItem.Split(" ");
+                if (ListItemSplit[0] == "P")
+                {
+                    GameObject InvPartParent = Instantiate(Resources.Load($"UIElements/InvPartParent", typeof(GameObject))) as GameObject;
+                    GameObject Panel = GameObject.Find("Panel");
+                    InvPartParent.transform.parent = Panel.transform;
+                    InvPartParent.layer = 5;
+                    string PartId = ListItemSplit[1];
+                    string Color = ListItemSplit[2];
+                    string ItemCount = ListItemSplit[3];
+                    GameObject Part = Instantiate(Resources.Load($"Models/Bricks/{PartId}", typeof(GameObject))) as GameObject;
+                    Material Mat = Resources.Load($"Materials/{Color}", typeof(Material)) as Material;
+                    Part.GetComponent<MeshRenderer>().material = Mat;
+                    Part.transform.parent = InvPartParent.transform;
+                    Part.layer = 5;
+                    Part.transform.localPosition = new Vector3(0, 0, 6.53f);
+                    Part.transform.localRotation = Quaternion.Euler(-197.3f, 36.3f, 5.8f);
+                    int ScaleFactor = 40;
+                    Part.transform.localScale = new Vector3(ScaleFactor, ScaleFactor, ScaleFactor);
+                }
+            }
+        }
     }
 
-    // Wichtig für Doku: Step "R" darf AUSSCHLIEßLICH nach einem Step "C" folgen!
     public void LastStep()
     {
         GameObject InsLoader = transform.gameObject;
@@ -243,6 +271,14 @@ public class InstructionLoader : MonoBehaviour
     {
         foreach (MeshRenderer Child in Obj.GetComponentsInChildren<MeshRenderer>())
             Child.enabled = Visibility;
+    }
+    private void ClearPanel()
+    {
+        GameObject Panel = GameObject.Find("Panel");
+        for (int i = 0; i < Panel.transform.childCount; i++)
+        {
+            Destroy(Panel.transform.GetChild(i).gameObject);
+        }
     }
 
     private void ToggleStepButtons(bool Locked)
