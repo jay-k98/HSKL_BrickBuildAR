@@ -23,7 +23,7 @@ public class InstructionLoader : MonoBehaviour
     public int StepNumber { get; set; }
 
     private List<string[]> StepStack = new List<string[]>();
-    private Dictionary<string, Dictionary<string, Tuple<Vector3, Quaternion>>> ComponentStack = new Dictionary<string, Dictionary<string, Tuple<Vector3, Quaternion>>>();
+    private Dictionary<string, Dictionary<string, Tuple<Vector3, Quaternion, Material>>> ComponentStack = new Dictionary<string, Dictionary<string, Tuple<Vector3, Quaternion, Material>>>();
     private List<GameObject> LastSteps = new List<GameObject>();
     private List<GameObject> Inventory = new List<GameObject>();
     private bool ButtonLocked = false;
@@ -91,14 +91,15 @@ public class InstructionLoader : MonoBehaviour
                 string PartName = $"{Part.name}.{PartCounter}";
                 Vector3 PartPos = Part.transform.position;
                 Quaternion PartRot = Part.transform.rotation;
-                Dictionary<string, Tuple<Vector3, Quaternion>> PartData = new Dictionary<string, Tuple<Vector3, Quaternion>>();
+                Material Mat = Part.GetComponent<MeshRenderer>().material;
+                Dictionary<string, Tuple<Vector3, Quaternion, Material>> PartData = new Dictionary<string, Tuple<Vector3, Quaternion, Material>>();
                 if (ComponentStack.ContainsKey(CompName))
                 {
-                    ComponentStack[CompName].Add(PartName, new Tuple<Vector3, Quaternion>(PartPos, PartRot));
+                    ComponentStack[CompName].Add(PartName, new Tuple<Vector3, Quaternion, Material>(PartPos, PartRot, Mat));
                 }
                 else
                 {
-                    PartData.Add(PartName, new Tuple<Vector3, Quaternion>(PartPos, PartRot));
+                    PartData.Add(PartName, new Tuple<Vector3, Quaternion, Material>(PartPos, PartRot, Mat));
                     ComponentStack.Add(CompName, PartData);
                 }
                 Destroy(Part);
@@ -159,8 +160,8 @@ public class InstructionLoader : MonoBehaviour
             if (LastSteps.Count > 0)
             {
                 GameObject last_step = LastSteps[LastSteps.Count - 1];
-                Destroy(last_step);
                 LastSteps.Remove(last_step);
+                Destroy(last_step);
             }
         }
         else if (Step[0] == "I")
@@ -169,11 +170,12 @@ public class InstructionLoader : MonoBehaviour
             foreach (string PartName in ComponentStack[CompName].Keys)
             {
                 string PartId = PartName.Split(".")[0].Replace("(Clone)", "");
-                GameObject part = Instantiate(Resources.Load($"Models/Bricks/{PartId}", typeof(GameObject))) as GameObject;
-                part.transform.position = ComponentStack[CompName][PartName].Item1;
-                part.transform.rotation = ComponentStack[CompName][PartName].Item2;
-                part.transform.parent = InsLoader.transform;
-                LastSteps.Add(part);
+                GameObject Part = Instantiate(Resources.Load($"Models/Bricks/{PartId}", typeof(GameObject))) as GameObject;
+                Part.transform.position = ComponentStack[CompName][PartName].Item1;
+                Part.transform.rotation = ComponentStack[CompName][PartName].Item2;
+                Part.GetComponent<MeshRenderer>().material = ComponentStack[CompName][PartName].Item3;
+                Part.transform.parent = InsLoader.transform;
+                LastSteps.Add(Part);
             }
             ComponentStack.Remove(CompName);
             Inventory.Remove(GameObject.Find(CompName));
