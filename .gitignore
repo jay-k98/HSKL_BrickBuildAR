@@ -75,24 +75,24 @@ Assets/AssetStoreTools*
 **/[Bb]uilds/
 **/Assets/AssetStoreTools*
 
-BrickBuildAR/Library/
-BrickBuildAR/Library/*
-BrickBuildAR/Logs/
-BrickBuildAR/Logs/*
-BrickBuildAR/Packages/
-BrickBuildAR/Packages/*
-BrickBuildAR/ProjectSettings/
-BrickBuildAR/ProjectSettings/*
-BrickBuildAR/[Tt]emp/
-BrickBuildAR/[Oo]bj/
-BrickBuildAR/[Bb]uild/
-BrickBuildAR/[Bb]uilds/
-BrickBuildAR/Assets/AssetStoreTools*
+HSKL_BrickBuildAR/Library/
+HSKL_BrickBuildAR/Library/*
+HSKL_BrickBuildAR/Logs/
+HSKL_BrickBuildAR/Logs/*
+HSKL_BrickBuildAR/Packages/
+HSKL_BrickBuildAR/Packages/*
+HSKL_BrickBuildAR/ProjectSettings/
+HSKL_BrickBuildAR/ProjectSettings/*
+HSKL_BrickBuildAR/[Tt]emp/
+HSKL_BrickBuildAR/[Oo]bj/
+HSKL_BrickBuildAR/[Bb]uild/
+HSKL_BrickBuildAR/[Bb]uilds/
+HSKL_BrickBuildAR/Assets/AssetStoreTools*
 
-BrickBuildAR/UserSettings/*
+HSKL_BrickBuildAR/UserSettings/*
 UserSettings/*
 UserSettings/Layouts/default-2021.dwlt
-BrickBuildAR/UserSettings/Layouts/default-2021.dwlt
+HSKL_BrickBuildAR/UserSettings/Layouts/default-2021.dwlt
 *.dwlt
 **/UserSettings/*
 **/UserSettings/
@@ -100,8 +100,8 @@ BrickBuildAR/UserSettings/Layouts/default-2021.dwlt
 **/UserSettings/Layouts/
 **/UserSettings/Layouts/*
 UserSettings/EditorUserSettings.asset
-BrickBuildAR/UserSettings/EditorUserSettings.asset
-BrickBuildAR/UserSettings/Search.settings
+HSKL_BrickBuildAR/UserSettings/EditorUserSettings.asset
+HSKL_BrickBuildAR/UserSettings/Search.settings
 UserSettings/EditorUserSettings.asset
 
 .DS_Store
