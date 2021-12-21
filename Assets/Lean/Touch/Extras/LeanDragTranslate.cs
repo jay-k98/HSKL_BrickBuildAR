@@ -30,10 +30,6 @@ namespace Lean.Touch
 		/// NOTE: This requires <b>Dampening</b> to be above 0.</summary>
 		public float Inertia { set { inertia = value; } get { return inertia; } } [FSA("Inertia")] [SerializeField] [Range(0.0f, 1.0f)] private float inertia;
 
-		/// <summary>Lock y axis translation</summary>
-		[SerializeField]
-		public bool LockY = true;
-
 		[SerializeField]
 		private Vector3 remainingTranslation;
 
