@@ -36,7 +36,7 @@ public class InstructionLoader : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Instructions = InstructionParser.ParseInstructions($"Instructions/{Filename}");
+        Instructions = InstructionParser.ParseInstructions($"Instructions/TXT/{Filename}");
         ButtonNext = GameObject.Find("Canvas/ButtonNext").GetComponent<Button>();
         ButtonLast = GameObject.Find("Canvas/ButtonLast").GetComponent<Button>();
         ButtonNext.image.color = ColorActive;

@@ -1,5 +1,5 @@
 # Core_Top
-L P 3031 Titanium_metallic 1:P 4733 Black 4
+L P 3031 Titanium_Metallic 1:P 4733 Black 4
 P 3031 0 0.003199999 0 180 0 0 Titanium_Metallic
 P 4733 -0.012 0.0128 0.012 180 0 0 Black
 P 4733 0.012 0.0128 0.012 180 0 0 Black
