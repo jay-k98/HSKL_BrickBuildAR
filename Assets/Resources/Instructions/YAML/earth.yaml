@@ -1,0 +1,267 @@
+steps:
+    - step: &id000
+        part:     3031.0
+        pos_x:    0
+        pos_y:    0.003199999
+        pos_z:    0
+        rot_x:    180
+        rot_y:    0
+        rot_z:    0
+        color:    Titanium_Metallic
+    - step: &id001
+        step_ref: *id000
+        part:     4733.0
+        pos_x:    -0.012
+        pos_y:    0.0128
+        pos_z:    0.012
+        rot_x:    180
+        rot_y:    0
+        rot_z:    0
+        color:    Black
+    - step: &id002
+        step_ref: *id001
+        part:     4733.1
+        pos_x:    0.012
+        pos_y:    0.0128
+        pos_z:    0.012
+        rot_x:    180
+        rot_y:    0
+        rot_z:    0
+        color:    Black
+    - step: &id003
+        step_ref: *id002
+        part:     4733.2
+        pos_x:    0.012
+        pos_y:    0.0128
+        pos_z:    -0.012
+        rot_x:    180
+        rot_y:    0
+        rot_z:    0
+        color:    Black
+    - step: &id004
+        step_ref: *id003
+        part:     4733.3
+        pos_x:    -0.012
+        pos_y:    0.0128
+        pos_z:    -0.012
+        rot_x:    180
+        rot_y:    0
+        rot_z:    0
+        color:    Black
+    - step: &id005
+        part:     3710.0
+        pos_x:    0
+        pos_y:    0.002818186
+        pos_z:    0.012
+        rot_x:    180
+        rot_y:    0
+        rot_z:    0
+        color:    Earth_Green
+    - step: &id006
+        step_ref: *id005
+        part:     15573.0
+        pos_x:    0.012
+        pos_y:    0.002800003
+        pos_z:    0.004000001
+        rot_x:    180
+        rot_y:    0
+        rot_z:    0
+        color:    Earth_Green
+    - step: &id007
+        step_ref: *id006
+        part:     15573.1
+        pos_x:    0.012
+        pos_y:    0.002800003
+        pos_z:    -0.004000001
+        rot_x:    180
+        rot_y:    0
+        rot_z:    0
+        color:    Earth_Green
+    - step: &id008
+        step_ref: *id007
+        part:     15573.2
+        pos_x:    -0.012
+        pos_y:    0.002800003
+        pos_z:    0.004000001
+        rot_x:    180
+        rot_y:    0
+        rot_z:    0
+        color:    Earth_Green
+    - step: &id009
+        step_ref: *id008
+        part:     15573.3
+        pos_x:    -0.012
+        pos_y:    0.002800003
+        pos_z:    -0.004000001
+        rot_x:    180
+        rot_y:    0
+        rot_z:    0
+        color:    Earth_Blue
+    - step: &id010
+        step_ref: *id009
+        part:     3710.1
+        pos_x:    0
+        pos_y:    0.002818186
+        pos_z:    -0.012
+        rot_x:    180
+        rot_y:    0
+        rot_z:    0
+        color:    Earth_Blue
+    - step: &id011
+        step_ref: *id010
+        part:     2420.0
+        pos_x:    -0.004
+        pos_y:    0.006018186
+        pos_z:    0.004000001
+        rot_x:    180
+        rot_y:    90
+        rot_z:    0
+        color:    Earth_Blue
+    - step: &id012
+        step_ref: *id011
+        part:     2420.1
+        pos_x:    0.004
+        pos_y:    0.006018186
+        pos_z:    0.004000001
+        rot_x:    180
+        rot_y:    180
+        rot_z:    0
+        color:    Earth_Green
+    - step: &id013
+        step_ref: *id012
+        part:     2420.2
+        pos_x:    0.004
+        pos_y:    0.006018186
+        pos_z:    -0.004000001
+        rot_x:    180
+        rot_y:    270
+        rot_z:    0
+        color:    Earth_Green
+    - step: &id014
+        step_ref: *id013
+        part:     2420.3
+        pos_x:    -0.004
+        pos_y:    0.006018186
+        pos_z:    -0.004000001
+        rot_x:    180
+        rot_y:    0
+        rot_z:    0
+        color:    Earth_Blue
+    - step: &id015
+        step_ref: *id014
+        part:     4032a.0
+        pos_x:    0
+        pos_y:    0.009218182
+        pos_z:    -2.384186E-09
+        rot_x:    180
+        rot_y:    0
+        rot_z:    0
+        color:    Earth_Green
+    - step: &id016
+        clear:    1
+        rot_to_x: 180
+        rot_to_y: 90
+        rot_to_z: 0
+        smoothing: 0
+    - step: &id017
+        comp:     Core_Bottom.0
+        pos_x:    0
+        pos_y:    -0.003199999
+        pos_z:    0
+    - step: &id018
+        step_ref: *id017
+        comp:     Side_South.0
+        pos_x:    0
+        pos_y:    -0.01638818
+        pos_z:    0
+    - step: &id019
+        step_ref: *id018
+        clear:    0
+        rot_from_x: 180
+        rot_from_y: 90
+        rot_from_z: 0
+        rot_to_x: 0
+        rot_to_y: 90
+        rot_to_z: 0
+        smoothing: 1
+    - step: &id020
+        step_ref: *id019
+        comp:     Side_East.0
+        pos_x:    0.0164
+        pos_y:    -1.81818E-05
+        pos_z:    0
+    - step: &id021
+        step_ref: *id020
+        clear:    0
+        rot_from_x: 0
+        rot_from_y: 90
+        rot_from_z: 0
+        rot_to_x: 0
+        rot_to_y: 0
+        rot_to_z: 0
+        smoothing: 1
+    - step: &id022
+        step_ref: *id021
+        comp:     Core_Top.0
+        pos_x:    0
+        pos_y:    0.003199999
+        pos_z:    -2.384186E-09
+    - step: &id023
+        step_ref: *id022
+        comp:     Side_Front.0
+        pos_x:    0
+        pos_y:    -1.820159E-05
+        pos_z:    -0.0164
+    - step: &id024
+        step_ref: *id023
+        clear:    0
+        rot_from_x: 0
+        rot_from_y: 0
+        rot_from_z: 0
+        rot_to_x: 0
+        rot_to_y: -180
+        rot_to_z: 0
+        smoothing: 1
+    - step: &id025
+        step_ref: *id024
+        comp:     Side_Back.0
+        pos_x:    0
+        pos_y:    -1.820016E-05
+        pos_z:    0.0164
+    - step: &id026
+        step_ref: *id025
+        clear:    0
+        rot_from_x: 0
+        rot_from_y: -180
+        rot_from_z: 0
+        rot_to_x: 0
+        rot_to_y: -90
+        rot_to_z: 0
+        smoothing: 1
+    - step: &id027
+        step_ref: *id026
+        comp:     Side_West.0
+        pos_x:    -0.0164
+        pos_y:    -1.81818E-05
+        pos_z:    0
+    - step: &id028
+        step_ref: *id027
+        clear:    0
+        rot_from_x: 0
+        rot_from_y: -90
+        rot_from_z: 0
+        rot_to_x: 0
+        rot_to_y: 0
+        rot_to_z: 0
+        smoothing: 1
+    - step: &id029
+        step_ref: *id028
+        comp:     Side_North.0
+        pos_x:    0
+        pos_y:    0.016
+        pos_z:    -2.384186E-09
+inventory:
+    - inv:  &idx001
+      steps:    [001,002,003,004,005]
+    - inv:  &idx002
+      steps:    [006,007,008,009,010]

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class InstructionLoader : MonoBehaviour
 {
@@ -20,29 +21,55 @@ public class InstructionLoader : MonoBehaviour
     [HideInInspector]
     public string[][] Instructions { get; set; }
     [HideInInspector]
-    public int StepNumber { get; set; }
 
-    private List<string[]> StepStack = new List<string[]>();
-    private List<string[]> InventoryStack = new List<string[]>();
-    private Dictionary<string, Dictionary<string, Tuple<Vector3, Quaternion, Material>>> ComponentStack = new Dictionary<string, Dictionary<string, Tuple<Vector3, Quaternion, Material>>>();
-    private List<GameObject> LastSteps = new List<GameObject>();
-    private List<GameObject> Inventory = new List<GameObject>();
-    private List<Vector3> RotationStack = new List<Vector3>();
+    //private List<string[]> StepStack = new List<string[]>();
+    //private List<string[]> InventoryStack = new List<string[]>();
+    private Dictionary<string, string[]> InventoryDict = new Dictionary<string, string[]>();
+    private Dictionary<string, Dictionary<string, Tuple<Vector3, Quaternion, Material>>> PartStack = new Dictionary<string, Dictionary<string, Tuple<Vector3, Quaternion, Material>>>();
+    //private List<GameObject> Inventory = new List<GameObject>();
+    //private List<Vector3> RotationStack = new List<Vector3>();
     private bool ButtonLocked = false;
     private Button ButtonNext;
     private Button ButtonLast;
+
+    private Dictionary<string, Dictionary<string, Dictionary<string, string>>> Instr = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
+
+    //private List<GameObject> LastParts = new List<GameObject>();
+
+    //private string ActiveInventoryKey = "";
+    //private int PartCounter = 0;
+
+    private GameObject DebugText;
+    private GameObject InsLoader;
+
+    private int StepNumber = 0;
+    private int StepCount = 0;
+
+    private bool GoingBackwards = false;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        Instructions = InstructionParser.ParseInstructions($"Instructions/TXT/{Filename}");
+        //Instructions = InstructionParser.ParseInstructions($"Instructions/TXT/{Filename}");
+        //InventoryDict = InstructionParser.ParseInventory($"Instructions/TXT/{Filename}");
+
         ButtonNext = GameObject.Find("Canvas/ButtonNext").GetComponent<Button>();
         ButtonLast = GameObject.Find("Canvas/ButtonLast").GetComponent<Button>();
         ButtonNext.image.color = ColorActive;
         ButtonLast.image.color = ColorActive;
+
+
+        //StepNumber = 0;
+        //NextStep();
+
+        DebugText = GameObject.Find("Canvas/DebugText");
+
+        Instr = InstructionParser.ParseInstructionsYaml($"Instructions/YAML/{Filename}");
+        InsLoader = GameObject.Find("InstructionLoader");
+        StepCount = Instr["steps"].Keys.Count;
         StepNumber = 0;
-        NextStep();
+        RenderStep();
     }
 
     // Update is called once per frame
@@ -51,180 +78,390 @@ public class InstructionLoader : MonoBehaviour
        
     }
 
-
-    public void NextStep()
+    private string[] PartsExcept (string[] Base, string[] Diff)
     {
-        GameObject InsLoader = transform.gameObject;
-        string[] Step = Instructions[StepNumber];
-        StepStack.Add(Step);
-        //Debug.Log($"Step: {Step[0]} {Step[1]} StepStackCount: {StepStack.Count} StepNumber: {StepNumber}");
-        string CompName = Step[1];
-        InsLoader.transform.position = Vector3.zero;
-        if (Step[0] == "P")
+        List<string> Except = new List<string>();
+        foreach (string Value in Base)
         {
-            Vector3 Pos = new Vector3(
-                float.Parse(Step[2], CultureInfo.InvariantCulture),
-                float.Parse(Step[3], CultureInfo.InvariantCulture),
-                float.Parse(Step[4], CultureInfo.InvariantCulture)
-                );
-            Vector3 Rot = new Vector3(
-                float.Parse(Step[5], CultureInfo.InvariantCulture),
-                float.Parse(Step[6], CultureInfo.InvariantCulture),
-                float.Parse(Step[7], CultureInfo.InvariantCulture)
-                );
-            string PartId = Step[1];
-            string Color = Step[8];
-            GameObject Part = Instantiate(Resources.Load($"Models/Bricks/{PartId}", typeof(GameObject))) as GameObject;
-            Material Mat = Resources.Load($"Materials/{Color}", typeof(Material)) as Material;
-            Part.transform.parent = InsLoader.transform;
-            Part.GetComponent<MeshRenderer>().material = Mat;
-            Part.transform.localPosition = Pos;
-            Part.transform.rotation = Quaternion.Euler(Rot);
-            LastSteps.Add(Part);
+            if (!Diff.Contains(Value))
+                Except.Add(Value);
         }
-        else if (Step[0] == "I")
+        return Except.ToArray();
+    }
+
+    private void RenderStep()
+    {
+        // TO DO INVENTORY:
+        // implemenent inventory like before. edit yaml to have correct stepnumber and inventory_id relation
+
+        DebugText.GetComponent<TMPro.TextMeshProUGUI>().text = $"StepNumber: {StepNumber}";
+
+        Dictionary<string, string>  PartList = new Dictionary<string, string>();
+        List<string> PartsAdded = new List<string>();
+
+        Dictionary<string, Dictionary<string, string>> Steps = Instr["steps"];
+        string StepId = $"&id{StepNumber:D3}";
+        Dictionary<string, string> Step = Steps[StepId];
+
+        if (Step.ContainsKey("rot_to_x"))
         {
-            int PartCounter = 0;
-            foreach (GameObject Part in LastSteps)
+            if (Step.ContainsKey("clear"))
             {
-                string PartName = $"{Part.name}.{PartCounter}";
-                Vector3 PartPos = Part.transform.position;
-                Quaternion PartRot = Part.transform.rotation;
-                Material Mat = Part.GetComponent<MeshRenderer>().material;
-                Dictionary<string, Tuple<Vector3, Quaternion, Material>> PartData = new Dictionary<string, Tuple<Vector3, Quaternion, Material>>();
-                if (ComponentStack.ContainsKey(CompName))
+                string Clear = Step["clear"];
+                if (Clear == "1")
+                    for (int i = 0; i < InsLoader.transform.childCount; i++)
+                        Destroy(InsLoader.transform.GetChild(i).gameObject);
+            }
+            if (Step.ContainsKey("smoothing"))
+            {
+                string StrSmoothingFactor = Step["smoothing"];
+                Vector3 RotTo = new Vector3(
+                    float.Parse(Step["rot_to_x"], CultureInfo.InvariantCulture),
+                    float.Parse(Step["rot_to_y"], CultureInfo.InvariantCulture),
+                    float.Parse(Step["rot_to_z"], CultureInfo.InvariantCulture)
+                    );
+                if (StrSmoothingFactor == "0")
                 {
-                    ComponentStack[CompName].Add(PartName, new Tuple<Vector3, Quaternion, Material>(PartPos, PartRot, Mat));
+                    if (GoingBackwards)
+                        InsLoader.transform.rotation = Quaternion.Euler(Vector3.zero);
+                    else
+                        InsLoader.transform.rotation = Quaternion.Euler(RotTo);
                 }
-                else
+                Vector3 RotFrom;
+                if (StrSmoothingFactor == "1")
                 {
-                    PartData.Add(PartName, new Tuple<Vector3, Quaternion, Material>(PartPos, PartRot, Mat));
-                    ComponentStack.Add(CompName, PartData);
+                    RotFrom = new Vector3(
+                        float.Parse(Step["rot_from_x"], CultureInfo.InvariantCulture),
+                        float.Parse(Step["rot_from_y"], CultureInfo.InvariantCulture),
+                        float.Parse(Step["rot_from_z"], CultureInfo.InvariantCulture)
+                        );
+                    float SmoothingFactor = float.Parse(StrSmoothingFactor, CultureInfo.InvariantCulture);
+                    if (GoingBackwards)
+                    {
+                        Vector3 TempRot = RotFrom;
+                        RotFrom = RotTo;
+                        RotTo = TempRot;
+                    }
+                    RotateView(RotFrom, RotTo, SmoothingFactor);
                 }
+            }
+        }
+
+        if (Step.ContainsKey("part"))
+            PartList.Add(Step["part"], StepId);
+        if (Step.ContainsKey("comp"))
+            PartList.Add(Step["comp"], StepId);
+
+        Dictionary<string, string> TempStep = Step;
+        while (TempStep.ContainsKey("step_ref"))
+        {
+            string TempStepId = TempStep["step_ref"].Replace("*", "&");
+            TempStep = Steps[TempStepId];
+            if (TempStep.ContainsKey("part"))
+                PartList.Add(TempStep["part"], TempStepId);
+            if (TempStep.ContainsKey("comp"))
+                PartList.Add(TempStep["comp"], TempStepId);
+        }
+
+        for (int i = 0; i < InsLoader.transform.childCount; i++)
+            PartsAdded.Add(InsLoader.transform.GetChild(i).name);
+
+        if (PartList.Count > 0)
+        {
+            string[] PartsAddedArr = PartsAdded.ToArray();
+            string[] PartListArr = PartList.Keys.ToArray();
+
+            string[] PartsToDel = PartsExcept(PartsAddedArr, PartListArr);
+            foreach (var PartName in PartsToDel)
+            {
+                GameObject Part = GameObject.Find($"InstructionLoader/{PartName}");
                 Destroy(Part);
-                PartCounter++;
             }
-            Inventory.Add(GameObject.Find($"InstructionLoader/{CompName}"));
-            LastSteps.Clear();
-        }
-        else if (Step[0] == "C")
-        {
-            GameObject Comp = GameObject.Find($"InstructionLoader/{CompName}(Clone)");
-            if (Comp == null)
-                Comp = Instantiate(Resources.Load($"Models/Components/{CompName}", typeof(GameObject))) as GameObject;
-            Vector3 PosComp = new Vector3(
-                float.Parse(Step[2], CultureInfo.InvariantCulture),
-                float.Parse(Step[3], CultureInfo.InvariantCulture),
-                float.Parse(Step[4], CultureInfo.InvariantCulture)
-                );
-            Vector3 RotComp = new Vector3(
-                float.Parse(Step[5], CultureInfo.InvariantCulture),
-                float.Parse(Step[6], CultureInfo.InvariantCulture),
-                float.Parse(Step[7], CultureInfo.InvariantCulture)
-                );
-            Comp.transform.parent = InsLoader.transform;
-            Comp.transform.localPosition = PosComp;
-            Comp.transform.localRotation = Quaternion.Euler(RotComp);
-            ToggleVisibility(Comp, true);
-        }
-        else if (Step[0].StartsWith("R"))
-        {
-            Vector3 RotateTo = new Vector3(
-                float.Parse(Step[1], CultureInfo.InvariantCulture),
-                float.Parse(Step[2], CultureInfo.InvariantCulture),
-                float.Parse(Step[3], CultureInfo.InvariantCulture)
-                );
-            if (Step[0] == "RS")
-                InsLoader.transform.rotation = Quaternion.Euler(RotateTo);
-            else
-                RotateView(InsLoader, RotateTo);
-            RotationStack.Add(RotateTo);
-        }
-        else if (Step[0] == "L")
-        {
-            ClearPanel();
-            FillInventory(Step);
-            InventoryStack.Add(Step);
-        }
-        if (Step[0] == "L" || Step[0] == "I" || Step[0] == "RS")
-        {
-            GoToNextStep();
+
+            string[] PartsToAdd = PartsExcept(PartListArr, PartsAddedArr);
+            foreach (var PartName in PartsToAdd)
+            {
+                string PartId = PartName.ToString().Split(".")[0];
+                StepId = PartList[PartName];
+                Step = Steps[StepId];
+
+                GameObject Part = null;
+                if (Step.ContainsKey("part"))
+                    Part = Instantiate(Resources.Load($"Models/Bricks/{PartId}", typeof(GameObject))) as GameObject;
+                if (Step.ContainsKey("comp"))
+                    Part = Instantiate(Resources.Load($"Models/Components/{PartId}", typeof(GameObject))) as GameObject;
+
+                Part.name = PartName;
+                Part.transform.SetParent(InsLoader.transform);
+
+                Vector3 Pos = new Vector3(
+                    float.Parse(Step["pos_x"], CultureInfo.InvariantCulture),
+                    float.Parse(Step["pos_y"], CultureInfo.InvariantCulture),
+                    float.Parse(Step["pos_z"], CultureInfo.InvariantCulture)
+                    );
+                Part.transform.localPosition = Pos;
+
+                Vector3 Rot = Vector3.zero;
+                if (Step.ContainsKey("part"))
+                {
+                    Rot = new Vector3(
+                    float.Parse(Step["rot_x"], CultureInfo.InvariantCulture),
+                    float.Parse(Step["rot_y"], CultureInfo.InvariantCulture),
+                    float.Parse(Step["rot_z"], CultureInfo.InvariantCulture)
+                    );
+                    Part.transform.localRotation = Quaternion.Euler(Rot);
+                }
+                if (Step.ContainsKey("comp"))
+                {
+                    Part.transform.localRotation = Quaternion.Euler(Rot);
+                }
+
+                if (Step.ContainsKey("part"))
+                {
+                    string Color = Step["color"];
+                    Material Mat = Resources.Load($"Materials/{Color}", typeof(Material)) as Material;
+                    Part.GetComponent<MeshRenderer>().material = Mat;
+                }
+            }
         }
     }
 
-    public void LastStep()
-    {
-        GameObject InsLoader = transform.gameObject;
-        string[] Step = StepStack[StepStack.Count - 1];
-        StepStack.RemoveAt(StepStack.Count - 1);
-        //Debug.Log($"Step: {Step[0]} {Step[1]} StepStackCount: {StepStack.Count} StepNumber: {StepNumber}");
-        InsLoader.transform.position = Vector3.zero;
-        string CompName = Step[1];
-        if (Instructions.Length > StepNumber + 1 && Instructions[StepNumber + 1][0] == "L")
-        {
-            ClearPanel();
-            InventoryStack.RemoveAt(InventoryStack.Count - 1);
-            FillInventory(InventoryStack[InventoryStack.Count - 1]);
-        }
-        if (Step[0] == "P")
-        {
-            if (LastSteps.Count > 0)
-            {
-                GameObject LastStep = LastSteps[LastSteps.Count - 1];
-                LastSteps.RemoveAt(LastSteps.Count - 1);
-                Destroy(LastStep);
-            }
-        }
-        else if (Step[0] == "I")
-        {
-            LastSteps.Clear();
-            foreach (string PartName in ComponentStack[CompName].Keys)
-            {
-                string PartId = PartName.Split(".")[0].Replace("(Clone)", "");
-                GameObject Part = Instantiate(Resources.Load($"Models/Bricks/{PartId}", typeof(GameObject))) as GameObject;
-                Part.transform.position = ComponentStack[CompName][PartName].Item1;
-                Part.transform.rotation = ComponentStack[CompName][PartName].Item2;
-                Part.GetComponent<MeshRenderer>().material = ComponentStack[CompName][PartName].Item3;
-                Part.transform.parent = InsLoader.transform;
-                LastSteps.Add(Part);
-            }
-            ComponentStack.Remove(CompName);
-            Inventory.Remove(GameObject.Find($"InstructionLoader/{CompName}"));
-        }
-        else if (Step[0] == "C")
-        {
-            CompName = $"{Step[1]}(Clone)";
-            GameObject Comp = GameObject.Find($"InstructionLoader/{CompName}");
-            if (Comp != null)
-                Destroy(Comp);
-        }
-        else if (Step[0].StartsWith("R"))
-        {
-            if (Step[0].EndsWith("S"))
-            {
-                InsLoader.transform.rotation = Quaternion.Euler(Vector3.zero);
-            }
-            else
-            {
-                Vector3 RotateTo = Vector3.zero;
-                RotationStack.RemoveAt(RotationStack.Count - 1);
-                if (RotationStack.Count > 0)
-                    RotateTo = RotationStack[RotationStack.Count - 1];
-                RotateView(InsLoader, RotateTo);
-            }
+    //public void NextStep()
+    //{
+    //    GameObject InsLoader = transform.gameObject;
+    //    string[] Step = Instructions[StepNumber];
+        
+    //    DebugText.GetComponent<TMPro.TextMeshProUGUI>().text = $"StepNumber: {StepNumber} Step[0]: {Step[0]}";
+
+    //    string InventoryKey = Step[1];
+    //    if (InventoryKey != ActiveInventoryKey)
+    //    {
+    //        ClearPanel();
+    //        FillInventory(InventoryKey);
+    //        PartCounter = 0;
+    //        if (PartStack.ContainsKey(ActiveInventoryKey))
+    //        {
+    //            foreach (string PartName in PartStack[ActiveInventoryKey].Keys)
+    //            {
+    //                GameObject Part = GameObject.Find($"InstructionLoader/{PartName}");
+    //                Destroy(Part);
+    //                //PartStack[ActiveInventoryKey].Remove(PartName);
+    //            }
+    //        }
+    //        //PartStack.Remove(ActiveInventoryKey);
+    //        ActiveInventoryKey = InventoryKey;
+    //    }
+
+    //    StepStack.Add(Step);
+    //    //Debug.Log($"Step: {Step[0]} {Step[1]} StepStackCount: {StepStack.Count} StepNumber: {StepNumber}");
+    //    InsLoader.transform.position = Vector3.zero;
+    //    if (Step[0] == "P")
+    //    {
+    //        string PartId = Step[2];
+    //        Vector3 Pos = new Vector3(
+    //            float.Parse(Step[3], CultureInfo.InvariantCulture),
+    //            float.Parse(Step[4], CultureInfo.InvariantCulture),
+    //            float.Parse(Step[5], CultureInfo.InvariantCulture)
+    //            );
+    //        Vector3 Rot = new Vector3(
+    //            float.Parse(Step[6], CultureInfo.InvariantCulture),
+    //            float.Parse(Step[7], CultureInfo.InvariantCulture),
+    //            float.Parse(Step[8], CultureInfo.InvariantCulture)
+    //            );
+    //        string Color = Step[9];
+    //        GameObject Part = Instantiate(Resources.Load($"Models/Bricks/{PartId}", typeof(GameObject))) as GameObject;
+    //        Material Mat = Resources.Load($"Materials/{Color}", typeof(Material)) as Material;
+    //        Part.transform.parent = InsLoader.transform;
+    //        Part.GetComponent<MeshRenderer>().material = Mat;
+    //        Part.transform.localPosition = Pos;
+    //        Part.transform.rotation = Quaternion.Euler(Rot);
+
+    //        Dictionary<string, Tuple<Vector3, Quaternion, Material>> PartData = new Dictionary<string, Tuple<Vector3, Quaternion, Material>>();
+    //        string PartName = $"{Part.name}.{PartCounter}";
+    //        Part.name = PartName;
+    //        PartCounter++;
+    //        if (PartStack.ContainsKey(InventoryKey))
+    //        {
+    //            PartStack[InventoryKey].Add(PartName, new Tuple<Vector3, Quaternion, Material>(Pos, Quaternion.Euler(Rot), Mat));
+    //        }
+    //        else
+    //        {
+    //            PartData.Add(PartName, new Tuple<Vector3, Quaternion, Material>(Pos, Quaternion.Euler(Rot), Mat));
+    //            PartStack.Add(InventoryKey, PartData);
+    //        }
+    //        LastParts.Add(Part);
+    //    }
+        //else if (Step[0] == "K")
+        //{
+        //    string CompName = Step[2];
+        //    int PartCounter = 0;
+        //    foreach (GameObject Part in LastSteps)
+        //    {
+        //        string PartName = $"{Part.name}.{PartCounter}";
+        //        Vector3 PartPos = Part.transform.position;
+        //        Quaternion PartRot = Part.transform.rotation;
+        //        Material Mat = Part.GetComponent<MeshRenderer>().material;
+        //        Dictionary<string, Tuple<Vector3, Quaternion, Material>> PartData = new Dictionary<string, Tuple<Vector3, Quaternion, Material>>();
+        //        if (ComponentStack.ContainsKey(CompName))
+        //        {
+        //            ComponentStack[CompName].Add(PartName, new Tuple<Vector3, Quaternion, Material>(PartPos, PartRot, Mat));
+        //        }
+        //        else
+        //        {
+        //            PartData.Add(PartName, new Tuple<Vector3, Quaternion, Material>(PartPos, PartRot, Mat));
+        //            ComponentStack.Add(CompName, PartData);
+        //        }
+        //        Destroy(Part);
+        //        PartCounter++;
+        //    }
+        //    Inventory.Add(GameObject.Find($"InstructionLoader/{CompName}"));
+        //    LastSteps.Clear();
+        //}
+    //    else if (Step[0] == "C")
+    //    {
+    //        string CompName = Step[2];
+    //        GameObject Comp = GameObject.Find($"InstructionLoader/{CompName}(Clone)");
+    //        if (Comp == null)
+    //            Comp = Instantiate(Resources.Load($"Models/Components/{CompName}", typeof(GameObject))) as GameObject;
+    //        Vector3 PosComp = new Vector3(
+    //            float.Parse(Step[3], CultureInfo.InvariantCulture),
+    //            float.Parse(Step[4], CultureInfo.InvariantCulture),
+    //            float.Parse(Step[5], CultureInfo.InvariantCulture)
+    //            );
+    //        Vector3 RotComp = new Vector3(
+    //            float.Parse(Step[6], CultureInfo.InvariantCulture),
+    //            float.Parse(Step[7], CultureInfo.InvariantCulture),
+    //            float.Parse(Step[8], CultureInfo.InvariantCulture)
+    //            );
+    //        Comp.transform.parent = InsLoader.transform;
+    //        Comp.transform.localPosition = PosComp;
+    //        Comp.transform.localRotation = Quaternion.Euler(RotComp);
+    //        ToggleVisibility(Comp, true);
+    //    }
+    //    else if (Step[0].StartsWith("R"))
+    //    {
+    //        Vector3 RotateTo = new Vector3(
+    //            float.Parse(Step[2], CultureInfo.InvariantCulture),
+    //            float.Parse(Step[3], CultureInfo.InvariantCulture),
+    //            float.Parse(Step[4], CultureInfo.InvariantCulture)
+    //            );
+    //        if (Step[0] == "RS")
+    //            InsLoader.transform.rotation = Quaternion.Euler(RotateTo);
+    //        else
+    //            RotateView(InsLoader, RotateTo);
+    //        RotationStack.Add(RotateTo);
+    //    }
+    //    if (Step[0] == "RS")
+    //    {
+    //        GoToNextStep();
+    //    }
+    //}
+
+    //public void LastStep()
+    //{
+    //    GameObject InsLoader = transform.gameObject;
+    //    string[] Step = StepStack[StepStack.Count - 1];
+    //    StepStack.RemoveAt(StepStack.Count - 1);
+
+    //    string InventoryKey = Step[1];
+    //    if (InventoryKey != ActiveInventoryKey)
+    //    {
+    //        ClearPanel();
+    //        FillInventory(InventoryKey);
+    //        if (PartStack.ContainsKey(ActiveInventoryKey))
+    //        {
+    //            foreach (string PartName in PartStack[ActiveInventoryKey].Keys)
+    //            {
+    //                GameObject Part = GameObject.Find($"InstructionLoader/{PartName}");
+    //                Destroy(Part);
+    //                PartStack[ActiveInventoryKey].Remove(PartName);
+    //            }
+    //            PartStack.Remove(ActiveInventoryKey);
+    //        }
+    //        if (PartStack.ContainsKey(InventoryKey))
+    //        {
+    //            foreach (string PartName in PartStack[InventoryKey].Keys)
+    //            {
+    //                GameObject Part = Instantiate(Resources.Load($"Models/Bricks/{PartName.Split(".")[0]}", typeof(GameObject))) as GameObject;
+    //                Part.transform.localPosition = PartStack[InventoryKey][PartName].Item1;
+    //                Part.transform.rotation = PartStack[InventoryKey][PartName].Item2;
+    //                Part.GetComponent<MeshRenderer>().material = PartStack[InventoryKey][PartName].Item3;
+    //            }
+    //        }
+    //        ActiveInventoryKey = InventoryKey;
+    //    }
+
+    //    DebugText.GetComponent<TMPro.TextMeshProUGUI>().text = $"StepNumber: {StepNumber} Step[0]: {Step[0]}";
+    //    //Debug.Log($"Step: {Step[0]} {Step[1]} StepStackCount: {StepStack.Count} StepNumber: {StepNumber}");
+
+    //    InsLoader.transform.position = Vector3.zero;
+    //    //if (Instructions.Length > StepNumber + 1 && Instructions[StepNumber + 1][0] == "I")
+    //    //{
+    //    //    ClearPanel();
+    //    //    InventoryStack.RemoveAt(InventoryStack.Count - 1);
+    //    //    FillInventory(InventoryStack[InventoryStack.Count - 1]);
+    //    //}
+    //    if (Step[0] == "P")
+    //    {
+    //        if (PartStack.Count > 0)
+    //        {
+    //            GameObject LastPart = LastParts[LastParts.Count - 1];
+    //            LastParts.RemoveAt(PartStack.Count - 1);
+    //            PartStack[InventoryKey].Remove(LastPart.name);
+    //            Destroy(LastPart);
+    //        }
+    //    }
+    //    //else if (Step[0] == "K")
+    //    //{
+    //    //    //LastSteps.Clear();
+    //    //    string CompName = Step[2];
+    //    //    foreach (string PartName in ComponentStack[CompName].Keys)
+    //    //    {
+    //    //        string PartId = PartName.Split(".")[0].Replace("(Clone)", "");
+    //    //        GameObject Part = Instantiate(Resources.Load($"Models/Bricks/{PartId}", typeof(GameObject))) as GameObject;
+    //    //        Part.transform.position = ComponentStack[CompName][PartName].Item1;
+    //    //        Part.transform.rotation = ComponentStack[CompName][PartName].Item2;
+    //    //        Part.GetComponent<MeshRenderer>().material = ComponentStack[CompName][PartName].Item3;
+    //    //        Part.transform.parent = InsLoader.transform;
+    //    //        LastSteps.Add(Part);
+    //    //    }
+    //    //    ComponentStack.Remove(CompName);
+    //    //    Inventory.Remove(GameObject.Find($"InstructionLoader/{CompName}"));
+    //    //}
+    //    else if (Step[0] == "C")
+    //    {
+    //        string CompName = Step[2];
+    //        CompName = $"{Step[2]}(Clone)";
+    //        GameObject Comp = GameObject.Find($"InstructionLoader/{CompName}");
+    //        if (Comp != null)
+    //            Destroy(Comp);
+    //    }
+    //    else if (Step[0].StartsWith("R"))
+    //    {
+    //        if (Step[0].EndsWith("S"))
+    //        {
+    //            InsLoader.transform.rotation = Quaternion.Euler(Vector3.zero);
+    //        }
+    //        else
+    //        {
+    //            Vector3 RotateTo = Vector3.zero;
+    //            RotationStack.RemoveAt(RotationStack.Count - 1);
+    //            if (RotationStack.Count > 0)
+    //                RotateTo = RotationStack[RotationStack.Count - 1];
+    //            RotateView(InsLoader, RotateTo);
+    //        }
             
-        }
-        if (Step[0] == "L" || Step[0] == "RS")
-        {
-            GoToLastStep();
-        }
-    }
-    private void FillInventory(string[] Step)
+    //    }
+    //    if (Step[0] == "RS")
+    //    {
+    //        GoToLastStep();
+    //    }
+    //}
+    private void FillInventory(string InventoryKey)
     {
-        string ListStr = string.Join(' ', Step, 1, Step.Length - 1);
-        string[] ListSplit = ListStr.Split(":");
+        string[] InvSplit = InventoryDict[InventoryKey];
         GameObject Panel = GameObject.Find("Canvas/Panel");
-        foreach (string ListItem in ListSplit)
+        foreach (string ListItem in InvSplit)
         {
             string[] ListItemSplit = ListItem.Split(" ");
             GameObject InvPartParent = Instantiate(Resources.Load("UIElements/InvPartParent", typeof(GameObject))) as GameObject;
@@ -276,17 +513,19 @@ public class InstructionLoader : MonoBehaviour
             }
         }
     }
-    private void RotateView(GameObject Comp, Vector3 RotateTo)
+    private void RotateView(Vector3 RotateFrom, Vector3 RotateTo, float SmoothingFactor)
     {
-        StartCoroutine(RotateViewAnimation(Comp.transform, Quaternion.Euler(RotateTo)));
+        StartCoroutine(RotateViewAnimation(Quaternion.Euler(RotateFrom), Quaternion.Euler(RotateTo), SmoothingFactor));
     }
 
-    IEnumerator RotateViewAnimation(Transform CompTransform, Quaternion RotateTo)
+    IEnumerator RotateViewAnimation(Quaternion RotateFrom, Quaternion RotateTo, float SmoothingFactor)
     {
         ToggleStepButtons(true);
-        while (CompTransform != null && Quaternion.Angle(CompTransform.rotation, RotateTo) > RotationEpsilon)
+        float Smooth = Smoothing * SmoothingFactor;
+        InsLoader.transform.rotation = RotateFrom;
+        while (InsLoader.transform != null && Quaternion.Angle(InsLoader.transform.rotation, RotateTo) > RotationEpsilon)
         {
-            CompTransform.rotation = Quaternion.Slerp(CompTransform.rotation, RotateTo, Smoothing * Time.deltaTime);
+            InsLoader.transform.rotation = Quaternion.Slerp(InsLoader.transform.rotation, RotateTo, Smooth * Time.deltaTime);
 
             yield return null;
         }
@@ -295,19 +534,19 @@ public class InstructionLoader : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
     }
-    private void ToggleVisibility(GameObject Obj, bool Visibility)
-    {
-        foreach (MeshRenderer Child in Obj.GetComponentsInChildren<MeshRenderer>())
-            Child.enabled = Visibility;
-    }
-    private void ClearPanel()
-    {
-        GameObject Panel = GameObject.Find("Canvas/Panel");
-        for (int i = 0; i < Panel.transform.childCount; i++)
-        {
-            Destroy(Panel.transform.GetChild(i).gameObject);
-        }
-    }
+    //private void ToggleVisibility(GameObject Obj, bool Visibility)
+    //{
+    //    foreach (MeshRenderer Child in Obj.GetComponentsInChildren<MeshRenderer>())
+    //        Child.enabled = Visibility;
+    //}
+    //private void ClearPanel()
+    //{
+    //    GameObject Panel = GameObject.Find("Canvas/Panel");
+    //    for (int i = 0; i < Panel.transform.childCount; i++)
+    //    {
+    //        Destroy(Panel.transform.GetChild(i).gameObject);
+    //    }
+    //}
 
     private void ToggleStepButtons(bool Locked)
     {
@@ -324,21 +563,41 @@ public class InstructionLoader : MonoBehaviour
         }
     }
 
+    //public void GoToNextStep()
+    //{
+    //    if (!ButtonLocked && StepNumber + 1 < Instructions.Length)
+    //    {
+    //        StepNumber++;
+    //        NextStep();
+    //    }
+    //}
+
+    //public void GoToLastStep()
+    //{
+    //    if (!ButtonLocked && StepNumber - 1 >= 0)
+    //    {
+    //        StepNumber--;
+    //        LastStep();
+    //    }
+    //}
+
     public void GoToNextStep()
     {
-        if (!ButtonLocked && StepNumber + 1 < Instructions.Length)
+        if (!ButtonLocked && StepNumber + 1 < StepCount)
         {
+            GoingBackwards = false;
             StepNumber++;
-            NextStep();
+            RenderStep();
         }
     }
 
     public void GoToLastStep()
     {
-        if (!ButtonLocked && StepNumber - 1 > 0)
+        if (!ButtonLocked && StepNumber - 1 >= 0)
         {
+            GoingBackwards = true;
             StepNumber--;
-            LastStep();
+            RenderStep();
         }
     }
 }
