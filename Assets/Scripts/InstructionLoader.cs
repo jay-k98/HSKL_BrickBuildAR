@@ -22,31 +22,20 @@ public class InstructionLoader : MonoBehaviour
     public string[][] Instructions { get; set; }
     [HideInInspector]
 
-    //private List<string[]> StepStack = new List<string[]>();
-    //private List<string[]> InventoryStack = new List<string[]>();
-    private Dictionary<string, string[]> InventoryDict = new Dictionary<string, string[]>();
     private Dictionary<string, string> InventoryStepRelation = new Dictionary<string, string>(); 
-    //private Dictionary<string, Dictionary<string, Tuple<Vector3, Quaternion, Material>>> PartStack = new Dictionary<string, Dictionary<string, Tuple<Vector3, Quaternion, Material>>>();
-    //private List<GameObject> Inventory = new List<GameObject>();
-    //private List<Vector3> RotationStack = new List<Vector3>();
-    private bool ButtonLocked = false;
+    private Dictionary<string, Dictionary<string, Dictionary<string, string>>> Instr = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
     private Button ButtonNext;
     private Button ButtonLast;
 
-    private Dictionary<string, Dictionary<string, Dictionary<string, string>>> Instr = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
-
-    //private List<GameObject> LastParts = new List<GameObject>();
-
-    //private int PartCounter = 0;
-
-    private string ActiveInventoryKey = "";
     private GameObject TextStepCounter;
     private GameObject InsLoader;
     private GameObject Panel;
 
+    private string ActiveInventoryKey = "";
     private int StepNumber = 0;
     private int StepCount = 0;
 
+    private bool ButtonLocked = false;
     private bool GoingBackwards = false;
 
 
@@ -274,29 +263,32 @@ public class InstructionLoader : MonoBehaviour
             string CompName = Instr["inventory"][InventoryKey][$"{CompKeyStr}{Counter}"];
             string Quantity = Instr["inventory"][InventoryKey][$"{QuantityKeyStr}{Counter}"];
 
-            //        //GameObject InvComp = Instantiate(Resources.Load($"UIElements/Inv{CompName}", typeof(GameObject))) as GameObject;
-            //        //InvComp.transform.parent = Panel.transform;
-            //        //InvComp.transform.localPosition = Vector3.zero;
-            //        //InvComp.transform.GetChild(0).transform.localPosition = new Vector3(0, 0, -1.25f);
-            //        //int ScaleFactor = 40;
-            //        //InvComp.transform.GetChild(0).transform.localScale = new Vector3(ScaleFactor, ScaleFactor, ScaleFactor);
-
-            GameObject InvPartParent = Instantiate(Resources.Load("UIElements/InvPartParent", typeof(GameObject))) as GameObject;
-            InvPartParent.transform.parent = Panel.transform;
-            InvPartParent.layer = 5;
-            InvPartParent.transform.localPosition = Vector3.zero;
-
-            GameObject Comp = Instantiate(Resources.Load($"Models/Components/{CompName}", typeof(GameObject))) as GameObject;
-            Comp.layer = 5;
-            for (int i = 0; i < Comp.transform.childCount; i++)
-            {
-                Comp.transform.GetChild(i).gameObject.layer = 5;
-            }
-            Comp.transform.parent = InvPartParent.transform;
-            Comp.transform.localPosition = new Vector3(0, 0, -1.25f);
-            Comp.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+            GameObject InvComp = Instantiate(Resources.Load($"UIElements/Inv{CompName}", typeof(GameObject))) as GameObject;
+            InvComp.transform.parent = Panel.transform;
+            InvComp.transform.localPosition = Vector3.zero;
+            float yOffset = 0f;
+            if (CompName.Split("_")[0] == "Core")
+                yOffset = -0.28f;
+            InvComp.transform.GetChild(0).transform.localPosition = new Vector3(0, yOffset, -1.25f);
             int ScaleFactor = 40;
-            Comp.transform.localScale = new Vector3(ScaleFactor, ScaleFactor, ScaleFactor);
+            InvComp.transform.GetChild(0).transform.localScale = new Vector3(ScaleFactor, ScaleFactor, ScaleFactor);
+
+            //GameObject InvPartParent = Instantiate(Resources.Load("UIElements/InvPartParent", typeof(GameObject))) as GameObject;
+            //InvPartParent.transform.parent = Panel.transform;
+            //InvPartParent.layer = 5;
+            //InvPartParent.transform.localPosition = Vector3.zero;
+
+            //GameObject Comp = Instantiate(Resources.Load($"Models/Components/{CompName}", typeof(GameObject))) as GameObject;
+            //Comp.layer = 5;
+            //for (int i = 0; i < Comp.transform.childCount; i++)
+            //{
+            //    Comp.transform.GetChild(i).gameObject.layer = 5;
+            //}
+            //Comp.transform.parent = InvPartParent.transform;
+            //Comp.transform.localPosition = new Vector3(0, 0, -1.25f);
+            //Comp.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+            //int ScaleFactor = 40;
+            //Comp.transform.localScale = new Vector3(ScaleFactor, ScaleFactor, ScaleFactor);
 
             Counter++;
         }
