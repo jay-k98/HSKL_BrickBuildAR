@@ -156,24 +156,39 @@ steps:
         rot_x:    180
         rot_y:    0
         rot_z:    0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Earth_Green
     - step: &id016
         clear:    1
+        rot_from_x: 0
+        rot_from_y: 0
+        rot_from_z: 0
         rot_to_x: 180
         rot_to_y: 90
         rot_to_z: 0
+        rot_view_x: 180
+        rot_view_y: 90
+        rot_view_z: 0
         smoothing: 0
     - step: &id017
         comp:     Core_Bottom.0
         pos_x:    0
         pos_y:    -0.003199999
         pos_z:    0
+        rot_view_x: 180
+        rot_view_y: 90
+        rot_view_z: 0
     - step: &id018
         step_ref: *id017
         comp:     Side_South.0
         pos_x:    0
         pos_y:    -0.01638818
         pos_z:    0
+        rot_view_x: 180
+        rot_view_y: 90
+        rot_view_z: 0
     - step: &id019
         step_ref: *id018
         clear:    0
@@ -183,6 +198,9 @@ steps:
         rot_to_x: 0
         rot_to_y: 90
         rot_to_z: 0
+        rot_view_x: 0
+        rot_view_y: 90
+        rot_view_z: 0
         smoothing: 1
     - step: &id020
         step_ref: *id019
@@ -190,6 +208,9 @@ steps:
         pos_x:    0.0164
         pos_y:    -1.81818E-05
         pos_z:    0
+        rot_view_x: 0
+        rot_view_y: 90
+        rot_view_z: 0
     - step: &id021
         step_ref: *id020
         clear:    0
@@ -199,6 +220,9 @@ steps:
         rot_to_x: 0
         rot_to_y: 0
         rot_to_z: 0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         smoothing: 1
     - step: &id022
         step_ref: *id021
@@ -206,12 +230,18 @@ steps:
         pos_x:    0
         pos_y:    0.003199999
         pos_z:    -2.384186E-09
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
     - step: &id023
         step_ref: *id022
         comp:     Side_Front.0
         pos_x:    0
         pos_y:    -1.820159E-05
         pos_z:    -0.0164
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
     - step: &id024
         step_ref: *id023
         clear:    0
@@ -221,6 +251,9 @@ steps:
         rot_to_x: 0
         rot_to_y: -180
         rot_to_z: 0
+        rot_view_x: 0
+        rot_view_y: -180
+        rot_view_z: 0
         smoothing: 1
     - step: &id025
         step_ref: *id024
@@ -237,6 +270,9 @@ steps:
         rot_to_x: 0
         rot_to_y: -90
         rot_to_z: 0
+        rot_view_x: 0
+        rot_view_y: -90
+        rot_view_z: 0
         smoothing: 1
     - step: &id027
         step_ref: *id026
@@ -253,6 +289,9 @@ steps:
         rot_to_x: 0
         rot_to_y: 0
         rot_to_z: 0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         smoothing: 1
     - step: &id029
         step_ref: *id028
@@ -260,6 +299,9 @@ steps:
         pos_x:    0
         pos_y:    0.016
         pos_z:    -2.384186E-09
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
 inventory:
     - inv:  &idx001
       steps:    [001,002,003,004,005]

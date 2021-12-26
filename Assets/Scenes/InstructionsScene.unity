@@ -1640,7 +1640,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Filename: earth
   Smoothing: 3
-  RotationEpsilon: 0.5
+  RotationEpsilon: 0.1
   ColorActive: {r: 1, g: 1, b: 1, a: 1}
   ColorInactive: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
 --- !u!4 &1807184848

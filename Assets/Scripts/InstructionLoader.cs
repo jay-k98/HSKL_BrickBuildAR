@@ -94,6 +94,14 @@ public class InstructionLoader : MonoBehaviour
         // TO DO INVENTORY:
         // implemenent inventory like before. edit yaml to have correct stepnumber and inventory_id relation
 
+        // TO DO ROTATION:
+        // FAKE Core_Bottom at beginning to Core_Top and place Side_South upside down.
+        // then make a simple rotation step as usual
+        // therefore higher the y-level of the whole "Earth" model to make South_Side's bottom stand on the bottom y=0
+        // -> re-run Disassembler
+
+        // GOING BACK FROM STEP 19 to 18 DOESN'T WORK AS INTENDED -> COULD BE FIXED BY Core_Top "HACK"
+
         DebugText.GetComponent<TMPro.TextMeshProUGUI>().text = $"StepNumber: {StepNumber}";
 
         Dictionary<string, string>  PartList = new Dictionary<string, string>();
@@ -102,6 +110,19 @@ public class InstructionLoader : MonoBehaviour
         Dictionary<string, Dictionary<string, string>> Steps = Instr["steps"];
         string StepId = $"&id{StepNumber:D3}";
         Dictionary<string, string> Step = Steps[StepId];
+
+        if (Step.ContainsKey("rot_view_x"))
+        {
+            Vector3 RotView = new Vector3(
+                float.Parse(Step["rot_view_x"], CultureInfo.InvariantCulture),
+                float.Parse(Step["rot_view_y"], CultureInfo.InvariantCulture),
+                float.Parse(Step["rot_view_z"], CultureInfo.InvariantCulture)
+                );
+            if (!(Vector3.SqrMagnitude(InsLoader.transform.rotation.eulerAngles - RotView) < 0.001))
+            {
+                InsLoader.transform.rotation = Quaternion.Euler(RotView);
+            }
+        }
 
         if (Step.ContainsKey("rot_to_x"))
         {
@@ -210,17 +231,14 @@ public class InstructionLoader : MonoBehaviour
                     float.Parse(Step["rot_z"], CultureInfo.InvariantCulture)
                     );
                     Part.transform.localRotation = Quaternion.Euler(Rot);
+
+                    string Color = Step["color"];
+                    Material Mat = Resources.Load($"Materials/{Color}", typeof(Material)) as Material;
+                    Part.GetComponent<MeshRenderer>().material = Mat;
                 }
                 if (Step.ContainsKey("comp"))
                 {
                     Part.transform.localRotation = Quaternion.Euler(Rot);
-                }
-
-                if (Step.ContainsKey("part"))
-                {
-                    string Color = Step["color"];
-                    Material Mat = Resources.Load($"Materials/{Color}", typeof(Material)) as Material;
-                    Part.GetComponent<MeshRenderer>().material = Mat;
                 }
             }
         }
