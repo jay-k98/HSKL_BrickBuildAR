@@ -94,14 +94,6 @@ public class InstructionLoader : MonoBehaviour
         // TO DO INVENTORY:
         // implemenent inventory like before. edit yaml to have correct stepnumber and inventory_id relation
 
-        // TO DO ROTATION:
-        // FAKE Core_Bottom at beginning to Core_Top and place Side_South upside down.
-        // then make a simple rotation step as usual
-        // therefore higher the y-level of the whole "Earth" model to make South_Side's bottom stand on the bottom y=0
-        // -> re-run Disassembler
-
-        // GOING BACK FROM STEP 19 to 18 DOESN'T WORK AS INTENDED -> COULD BE FIXED BY Core_Top "HACK"
-
         DebugText.GetComponent<TMPro.TextMeshProUGUI>().text = $"StepNumber: {StepNumber}";
 
         Dictionary<string, string>  PartList = new Dictionary<string, string>();
@@ -120,51 +112,10 @@ public class InstructionLoader : MonoBehaviour
                 );
             if (!(Vector3.SqrMagnitude(InsLoader.transform.rotation.eulerAngles - RotView) < 0.001))
             {
-                InsLoader.transform.rotation = Quaternion.Euler(RotView);
-            }
-        }
-
-        if (Step.ContainsKey("rot_to_x"))
-        {
-            if (Step.ContainsKey("clear"))
-            {
-                string Clear = Step["clear"];
-                if (Clear == "1")
-                    for (int i = 0; i < InsLoader.transform.childCount; i++)
-                        Destroy(InsLoader.transform.GetChild(i).gameObject);
-            }
-            if (Step.ContainsKey("smoothing"))
-            {
-                string StrSmoothingFactor = Step["smoothing"];
-                Vector3 RotTo = new Vector3(
-                    float.Parse(Step["rot_to_x"], CultureInfo.InvariantCulture),
-                    float.Parse(Step["rot_to_y"], CultureInfo.InvariantCulture),
-                    float.Parse(Step["rot_to_z"], CultureInfo.InvariantCulture)
-                    );
-                if (StrSmoothingFactor == "0")
-                {
-                    if (GoingBackwards)
-                        InsLoader.transform.rotation = Quaternion.Euler(Vector3.zero);
-                    else
-                        InsLoader.transform.rotation = Quaternion.Euler(RotTo);
-                }
-                Vector3 RotFrom;
-                if (StrSmoothingFactor == "1")
-                {
-                    RotFrom = new Vector3(
-                        float.Parse(Step["rot_from_x"], CultureInfo.InvariantCulture),
-                        float.Parse(Step["rot_from_y"], CultureInfo.InvariantCulture),
-                        float.Parse(Step["rot_from_z"], CultureInfo.InvariantCulture)
-                        );
-                    float SmoothingFactor = float.Parse(StrSmoothingFactor, CultureInfo.InvariantCulture);
-                    if (GoingBackwards)
-                    {
-                        Vector3 TempRot = RotFrom;
-                        RotFrom = RotTo;
-                        RotTo = TempRot;
-                    }
-                    RotateView(RotFrom, RotTo, SmoothingFactor);
-                }
+                if ((Step.ContainsKey("smoothing") && (Step["smoothing"] == "0")) || (GoingBackwards && Step.ContainsKey("part")))
+                    InsLoader.transform.rotation = Quaternion.Euler(RotView);
+                else
+                    RotateView(InsLoader.transform.rotation.eulerAngles, RotView, 1.0f);
             }
         }
 
