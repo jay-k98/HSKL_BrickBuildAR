@@ -8,6 +8,9 @@ steps:
         rot_y:    0
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Titanium_Metallic
     - step: &id001
         step_ref: *id000
@@ -19,6 +22,9 @@ steps:
         rot_y:    0
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Black
     - step: &id002
         step_ref: *id001
@@ -30,6 +36,9 @@ steps:
         rot_y:    0
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Black
     - step: &id003
         step_ref: *id002
@@ -41,6 +50,9 @@ steps:
         rot_y:    0
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Black
     - step: &id004
         step_ref: *id003
@@ -52,6 +64,9 @@ steps:
         rot_y:    0
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Black
     - step: &id005
         part:     3710.0
@@ -62,6 +77,9 @@ steps:
         rot_y:    0
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Earth_Green
     - step: &id006
         step_ref: *id005
@@ -73,6 +91,9 @@ steps:
         rot_y:    0
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Earth_Green
     - step: &id007
         step_ref: *id006
@@ -84,6 +105,9 @@ steps:
         rot_y:    0
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Earth_Green
     - step: &id008
         step_ref: *id007
@@ -95,6 +119,9 @@ steps:
         rot_y:    0
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Earth_Green
     - step: &id009
         step_ref: *id008
@@ -106,6 +133,9 @@ steps:
         rot_y:    0
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Earth_Blue
     - step: &id010
         step_ref: *id009
@@ -117,6 +147,9 @@ steps:
         rot_y:    0
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Earth_Blue
     - step: &id011
         step_ref: *id010
@@ -128,6 +161,9 @@ steps:
         rot_y:    90
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Earth_Blue
     - step: &id012
         step_ref: *id011
@@ -139,6 +175,9 @@ steps:
         rot_y:    180
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Earth_Green
     - step: &id013
         step_ref: *id012
@@ -150,6 +189,9 @@ steps:
         rot_y:    270
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Earth_Green
     - step: &id014
         step_ref: *id013
@@ -161,6 +203,9 @@ steps:
         rot_y:    0
         rot_z:    0
         height_y:   0.0
+        rot_view_x: 0
+        rot_view_y: 0
+        rot_view_z: 0
         color:    Earth_Blue
     - step: &id015
         step_ref: *id014
@@ -254,6 +299,9 @@ steps:
         pos_y:    -1.820016E-05
         pos_z:    0.0164
         height_y:   1.56
+        rot_view_x: 0
+        rot_view_y: -180
+        rot_view_z: 0
     - step: &id025
         step_ref: *id024
         height_y:   1.56
@@ -268,6 +316,9 @@ steps:
         pos_y:    -1.81818E-05
         pos_z:    0
         height_y:   1.56
+        rot_view_x: 0
+        rot_view_y: -90
+        rot_view_z: 0
     - step: &id027
         step_ref: *id026
         height_y:   1.56
