@@ -180,6 +180,7 @@ steps:
         rot_view_z: 180
     - step: &id018
         step_ref: *id017
+        height_y:   1.56
         rot_view_x: 0
         rot_view_y: 90
         rot_view_z: 0

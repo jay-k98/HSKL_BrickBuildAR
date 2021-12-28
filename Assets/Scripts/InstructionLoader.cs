@@ -26,6 +26,7 @@ public class InstructionLoader : MonoBehaviour
     private Dictionary<string, Dictionary<string, Dictionary<string, string>>> Instr = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
     private Button ButtonNext;
     private Button ButtonLast;
+    private Slider Slider;
 
     private GameObject TextStepCounter;
     private GameObject InsLoader;
@@ -37,6 +38,20 @@ public class InstructionLoader : MonoBehaviour
 
     private bool ButtonLocked = false;
     private bool GoingBackwards = false;
+    //private bool OverrideSmoothing = false;
+
+
+    public void OnSliderDrag()
+    {
+        int TempStepNumber = (int) Slider.value;
+        if (StepNumber > TempStepNumber)
+            GoingBackwards = true;
+        if (StepNumber != TempStepNumber)
+        {
+            StepNumber = TempStepNumber;
+            RenderStep(true);
+        }
+    }
 
 
     // Start is called before the first frame update
@@ -49,6 +64,7 @@ public class InstructionLoader : MonoBehaviour
         TextStepCounter = GameObject.Find("Canvas/StepCounter");
         ButtonNext.image.color = ColorActive;
         ButtonLast.image.color = ColorActive;
+        Slider = GameObject.Find("Canvas/Slider").GetComponent<Slider>();
 
         Instr = InstructionParser.ParseInstructionsYaml($"Instructions/YAML/{Filename}");
         foreach (string Key in Instr["inventory"].Keys)
@@ -60,8 +76,10 @@ public class InstructionLoader : MonoBehaviour
         }
 
         StepCount = Instr["steps"].Keys.Count;
+        Slider.maxValue = StepCount - 1;
+        Slider.minValue = 0;
         StepNumber = 0;
-        RenderStep();
+        RenderStep(false);
     }
 
     // Update is called once per frame
@@ -81,7 +99,7 @@ public class InstructionLoader : MonoBehaviour
         return Except.ToArray();
     }
 
-    private void RenderStep()
+    public void RenderStep(bool OverrideSmoothing)
     {
         // Get Inventory Key of Active Step
         string InventoryKey = InventoryStepRelation[$"{StepNumber:D3}"];
@@ -109,6 +127,18 @@ public class InstructionLoader : MonoBehaviour
         // Get Active Step
         Dictionary<string, string> Step = Steps[StepId];
 
+        // Set Height of InstructionLoader if required
+        if (Step.ContainsKey("height_y"))
+        {
+            float NewHeight = float.Parse(Step["height_y"], CultureInfo.InvariantCulture);
+            if (NewHeight - InsLoader.transform.position.y > 0.00001f)
+            {
+                Vector3 Pos = InsLoader.transform.position;
+                Pos.y = NewHeight;
+                InsLoader.transform.position = Pos;
+            }
+        }
+
         // Rotate view
         if (Step.ContainsKey("rot_view_x"))
         {
@@ -122,7 +152,7 @@ public class InstructionLoader : MonoBehaviour
             if (!(Vector3.SqrMagnitude(InsLoader.transform.rotation.eulerAngles - RotView) < 0.001))
             {
                 // Instant rotation if smoothing is 0 or going backwards to a "part" step
-                if ((Step.ContainsKey("smoothing") && (Step["smoothing"] == "0")) || (GoingBackwards && Step.ContainsKey("part")))
+                if (OverrideSmoothing || (Step.ContainsKey("smoothing") && (Step["smoothing"] == "0")) || (GoingBackwards && Step.ContainsKey("part")))
                     InsLoader.transform.rotation = Quaternion.Euler(RotView);
                 // Animated Rotation
                 else
@@ -345,7 +375,8 @@ public class InstructionLoader : MonoBehaviour
         {
             GoingBackwards = false;
             StepNumber++;
-            RenderStep();
+            Slider.value = StepNumber;
+            RenderStep(false);
         }
     }
 
@@ -355,7 +386,8 @@ public class InstructionLoader : MonoBehaviour
         {
             GoingBackwards = true;
             StepNumber--;
-            RenderStep();
+            Slider.value = StepNumber;
+            RenderStep(false);
         }
     }
 }
