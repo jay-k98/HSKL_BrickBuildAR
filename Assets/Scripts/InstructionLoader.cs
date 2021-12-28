@@ -152,7 +152,7 @@ public class InstructionLoader : MonoBehaviour
             if (!(Vector3.SqrMagnitude(InsLoader.transform.rotation.eulerAngles - RotView) < 0.001))
             {
                 // Instant rotation if smoothing is 0 or going backwards to a "part" step
-                if (OverrideSmoothing || (Step.ContainsKey("smoothing") && (Step["smoothing"] == "0")) || (GoingBackwards && Step.ContainsKey("part")))
+                if (OverrideSmoothing || Step.ContainsKey("part") || (Step.ContainsKey("smoothing") && (Step["smoothing"] == "0")))
                     InsLoader.transform.rotation = Quaternion.Euler(RotView);
                 // Animated Rotation
                 else
@@ -340,6 +340,7 @@ public class InstructionLoader : MonoBehaviour
     IEnumerator RotateViewAnimation(Quaternion RotateFrom, Quaternion RotateTo, float SmoothingFactor)
     {
         ToggleStepButtons(true);
+        Slider.interactable = false;
         float Smooth = Smoothing * SmoothingFactor;
         InsLoader.transform.rotation = RotateFrom;
         while (InsLoader.transform != null && Quaternion.Angle(InsLoader.transform.rotation, RotateTo) > RotationEpsilon)
@@ -350,6 +351,7 @@ public class InstructionLoader : MonoBehaviour
         }
 
         ToggleStepButtons(false);
+        Slider.interactable = true;
         yield return new WaitForSeconds(0.1f);
 
     }
