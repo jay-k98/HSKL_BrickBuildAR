@@ -5,31 +5,41 @@ using UnityEngine;
 
 public class InstructionParser
 {
-    public static string[][] ParseInstructions(string Filename)
+    public static Dictionary<string, Dictionary<string, Dictionary<string, string>>> ParseInstructionsYaml(string Filename)
     {
         TextAsset RawInstructions = (TextAsset)Resources.Load(Filename);
-        string[] Lines = RawInstructions.ToString().Split("\n");
-        int NbrComments = CountComments(Lines);
-        string[][] Instructions = new string[Lines.Length - NbrComments][];
+        Dictionary<string, Dictionary<string, Dictionary<string, string>>> Instructions = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
 
-        int i = 0;
-        foreach (string Line in Lines)
+        string activeKey = "";
+        string activeStepId = "";
+        foreach (string s in RawInstructions.ToString().Split("\n"))
         {
-            if (Line.StartsWith("#"))
-                continue;
-            Instructions[i] = Line.Replace("\r", "").Split(" ");
-            i += 1;
+            if (!s.StartsWith(" "))
+            {
+                string actKey = s.Trim().Replace(":", "");
+                Instructions.Add(actKey, new Dictionary<string, Dictionary<string, string>>());
+                activeKey = actKey;
+            }
+            if (s.StartsWith("    -"))
+            {
+                string stepId = s.Split(":")[1].Trim();
+                if (Instructions.ContainsKey(activeKey))
+                {
+                    Instructions[activeKey].Add(stepId, new Dictionary<string, string>());
+                }
+                activeStepId = stepId;
+            }
+            if (s.StartsWith("        ") || s.StartsWith("      "))
+            {
+                var split = s.Split(":");
+                var key = split[0].Replace("-", "").Trim();
+                var value = split[1].Trim();
+                if (Instructions[activeKey].ContainsKey(activeStepId))
+                {
+                    Instructions[activeKey][activeStepId].Add(key, value);
+                }
+            }
         }
-
         return Instructions;
-    }
-
-    private static int CountComments(string[] Lines)
-    {
-        int NbrComments = 0;
-        foreach (string Line in Lines)
-            if (Line.StartsWith("#") || Line.Trim() == "")
-                NbrComments++;
-        return NbrComments;
     }
 }
