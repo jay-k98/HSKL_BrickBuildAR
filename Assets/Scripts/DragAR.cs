@@ -18,8 +18,6 @@ public class DragAR : MonoBehaviour
 
     static List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
-    public Vector3 scaleVector;
-
 
     private void Awake()
     {
@@ -48,7 +46,7 @@ public class DragAR : MonoBehaviour
             var hitPose = hits[0].pose;
 
             spawnedObject.transform.position = hitPose.position;
-            spawnedObject.transform.localScale = scaleVector;
+
         }
     }
 }

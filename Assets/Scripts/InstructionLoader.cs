@@ -22,7 +22,7 @@ public class InstructionLoader : MonoBehaviour
     public string[][] Instructions { get; set; }
     [HideInInspector]
 
-    private Dictionary<string, string> InventoryStepRelation = new Dictionary<string, string>(); 
+    private Dictionary<string, string> InventoryStepRelation = new Dictionary<string, string>();
     private Dictionary<string, Dictionary<string, Dictionary<string, string>>> Instr = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
     private Button ButtonNext;
     private Button ButtonLast;
@@ -43,7 +43,7 @@ public class InstructionLoader : MonoBehaviour
 
     public void OnSliderDrag()
     {
-        int TempStepNumber = (int) Slider.value;
+        int TempStepNumber = (int)Slider.value;
         if (StepNumber > TempStepNumber)
             GoingBackwards = true;
         if (StepNumber != TempStepNumber)
@@ -85,10 +85,10 @@ public class InstructionLoader : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
+
     }
 
-    private string[] PartsExcept (string[] Base, string[] Diff)
+    private string[] PartsExcept(string[] Base, string[] Diff)
     {
         List<string> Except = new List<string>();
         foreach (string Value in Base)
@@ -117,7 +117,7 @@ public class InstructionLoader : MonoBehaviour
         TextStepCounter.GetComponent<TMPro.TextMeshProUGUI>().text = $"{StepNumber + 1}/{StepCount}";
 
         // Init empty Lists
-        Dictionary<string, string>  PartList = new Dictionary<string, string>();
+        Dictionary<string, string> PartList = new Dictionary<string, string>();
         List<string> PartsAdded = new List<string>();
 
         // Init Steps Dictionary
@@ -252,6 +252,12 @@ public class InstructionLoader : MonoBehaviour
                     // Set rotation of component
                     Part.transform.localRotation = Quaternion.Euler(Rot);
                 }
+
+                ToggleAR ToggleAr = GameObject.Find("Canvas/ButtonToggleAR").GetComponent<ToggleAR>();
+                if (ToggleAr.IsActive)
+                {
+                    Part.transform.localScale = Vector3.one;
+                }
             }
         }
     }
@@ -264,7 +270,7 @@ public class InstructionLoader : MonoBehaviour
         string ColorKeyStr = "color_";
 
         int Counter = 0;
-        while(Instr["inventory"][InventoryKey].ContainsKey($"{PartKeyStr}{Counter}"))
+        while (Instr["inventory"][InventoryKey].ContainsKey($"{PartKeyStr}{Counter}"))
         {
             string PartId = Instr["inventory"][InventoryKey][$"{PartKeyStr}{Counter}"];
             string Quantity = Instr["inventory"][InventoryKey][$"{QuantityKeyStr}{Counter}"];

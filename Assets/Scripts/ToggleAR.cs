@@ -11,10 +11,15 @@ public class ToggleAR : MonoBehaviour
     [Tooltip("Sprite used for the Toggle Button when it's inactive.")]
     public Sprite ArIsInactive;
 
-    private bool IsActive = false;
+    [HideInInspector]
+    public bool IsActive = false;
     private Button ButtonToggle;
     public GameObject cameraNoAR;
     public GameObject cameraAR;
+    public GameObject InstructionLoader;
+    public Vector3 ScaleAR;
+    public Vector3 ScaleBlueprint;
+    private Vector3 ResetPos;
     // Start is called before the first frame update
 
     void Start()
@@ -33,12 +38,20 @@ public class ToggleAR : MonoBehaviour
         IsActive = !IsActive;
         if (IsActive)
         {
+            GameObject.Find("AR Session Origin").GetComponent<DragAR>().enabled = true;
+            InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = false;
+            ResetPos = InstructionLoader.transform.position;
+            InstructionLoader.transform.localScale = ScaleAR;
             cameraNoAR.SetActive(false);
             cameraAR.SetActive(true);
             ButtonToggle.image.sprite = ArIsActive;
         }
         else
         {
+            GameObject.Find("AR Session Origin").GetComponent<DragAR>().enabled = false;
+            InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = true;
+            InstructionLoader.transform.localScale = ScaleBlueprint;
+            InstructionLoader.transform.position = ResetPos;
             cameraAR.SetActive(false);
             cameraNoAR.SetActive(true);
             ButtonToggle.image.sprite = ArIsInactive;
