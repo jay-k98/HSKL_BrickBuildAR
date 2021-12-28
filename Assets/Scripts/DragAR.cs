@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(ARRaycastManager))]
 
@@ -39,14 +40,18 @@ public class DragAR : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!TryGetTouchPosition(out Vector2 touchPosition))
-            return;
-        if (_arRayCastManager.Raycast(touchPosition, hits, TrackableType.PlaneWithinPolygon))
+        EventSystem eventSystem = FindObjectOfType<EventSystem>();
+        if (eventSystem == null || !eventSystem.IsPointerOverGameObject())
         {
-            var hitPose = hits[0].pose;
+            if (!TryGetTouchPosition(out Vector2 touchPosition))
+                return;
+            if (_arRayCastManager.Raycast(touchPosition, hits, TrackableType.PlaneWithinPolygon))
+            {
+                var hitPose = hits[0].pose;
 
-            spawnedObject.transform.position = hitPose.position;
+                spawnedObject.transform.position = hitPose.position;
 
+            }
         }
     }
 }
