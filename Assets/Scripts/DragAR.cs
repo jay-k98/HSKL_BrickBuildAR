@@ -16,22 +16,14 @@ public class DragAR : MonoBehaviour
 
     private ARRaycastManager _arRayCastManager;
 
-    //Touchposition auf Screen
-    private Vector2 touchPosition;
-
-    //Größenänderung im Raum
-    private Vector3 scaleChange;
-
-
-    private Vector3 versatz;
-
     static List<ARRaycastHit> hits = new List<ARRaycastHit>();
+
+    public Vector3 scaleVector;
 
 
     private void Awake()
     {
         _arRayCastManager = GetComponent<ARRaycastManager>();
-        versatz = new Vector3(0.0f, 0.0f, 0.0f);
     }
 
     bool TryGetTouchPosition(out Vector2 touchPosition)
@@ -55,13 +47,8 @@ public class DragAR : MonoBehaviour
         {
             var hitPose = hits[0].pose;
 
-            //if (arObject == null)
-            //{
-            //    arObject = Instantiate(spawnedObject, hitPose.position, hitPose.rotation);
-            //}
-
-            spawnedObject.transform.position = hitPose.position + versatz;
-            spawnedObject.transform.localScale = new Vector3(4, 4, 4);
+            spawnedObject.transform.position = hitPose.position;
+            spawnedObject.transform.localScale = scaleVector;
         }
     }
 }
