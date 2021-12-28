@@ -284,6 +284,7 @@ public class InstructionLoader : MonoBehaviour
             GameObject Part = Instantiate(Resources.Load($"Models/Bricks/{PartId}", typeof(GameObject))) as GameObject;
             Material Mat = Resources.Load($"Materials/{Color}", typeof(Material)) as Material;
             Part.GetComponent<MeshRenderer>().material = Mat;
+            InvPartParent.transform.GetChild(0).gameObject.GetComponent<TMPro.TextMeshPro>().text = $"{Quantity}x";
             Part.layer = 5;
             Part.transform.parent = InvPartParent.transform;
             Part.transform.localPosition = new Vector3(0, 0, -1.25f);
@@ -302,6 +303,7 @@ public class InstructionLoader : MonoBehaviour
             GameObject InvComp = Instantiate(Resources.Load($"UIElements/Inv{CompName}", typeof(GameObject))) as GameObject;
             InvComp.transform.parent = Panel.transform;
             InvComp.transform.localPosition = Vector3.zero;
+            InvComp.transform.GetChild(1).gameObject.GetComponent<TMPro.TextMeshPro>().text = $"{Quantity}x";
             float yOffset = 0f;
             if (CompName.Split("_")[0] == "Core")
                 yOffset = -0.28f;
