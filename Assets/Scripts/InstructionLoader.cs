@@ -37,15 +37,12 @@ public class InstructionLoader : MonoBehaviour
     private int StepCount = 0;
 
     private bool ButtonLocked = false;
-    private bool GoingBackwards = false;
     //private bool OverrideSmoothing = false;
 
 
     public void OnSliderDrag()
     {
         int TempStepNumber = (int)Slider.value;
-        if (StepNumber > TempStepNumber)
-            GoingBackwards = true;
         if (StepNumber != TempStepNumber)
         {
             StepNumber = TempStepNumber;
@@ -383,7 +380,6 @@ public class InstructionLoader : MonoBehaviour
     {
         if (!ButtonLocked && StepNumber + 1 < StepCount)
         {
-            GoingBackwards = false;
             StepNumber++;
             Slider.value = StepNumber;
             RenderStep(false);
@@ -394,7 +390,6 @@ public class InstructionLoader : MonoBehaviour
     {
         if (!ButtonLocked && StepNumber - 1 >= 0)
         {
-            GoingBackwards = true;
             StepNumber--;
             Slider.value = StepNumber;
             RenderStep(false);
