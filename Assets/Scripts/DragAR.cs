@@ -28,8 +28,15 @@ public class DragAR : MonoBehaviour
     private void Awake()
     {
         _arRayCastManager = GetComponent<ARRaycastManager>();
-        PlaneManager = GameObject.Find("AR Session Origin").GetComponent<ARPlaneManager>();
         InsLoader = GameObject.Find("InstructionLoader");
+        try
+        {
+            PlaneManager = GameObject.Find("AR Session Origin").GetComponent<ARPlaneManager>();
+        }
+        catch
+        {
+            Debug.Log("DEBUG: Can't find PlaneManager!");
+        }
     }
 
     bool TryGetTouchPosition(out Vector2 touchPosition)
@@ -55,18 +62,31 @@ public class DragAR : MonoBehaviour
             if (_arRayCastManager.Raycast(touchPosition, hits, TrackableType.PlaneWithinPolygon))
             {
                 var hitPose = hits[0].pose;
-                ActiveTrackableId =  hits[0].trackableId;
 
                 spawnedObject.transform.position = hitPose.position;
-                
 
+                try
+                {
+                    ActiveTrackableId = hits[0].trackableId;
+                }
+                catch
+                {
+                    Debug.Log("DEBUG: Can't get TrackableId!");
+                }
             }
         }
-        if (ActiveTrackableId != null)
+        try
         {
-            ActiveArPlane = PlaneManager.GetPlane(ActiveTrackableId.Value);
-            if (ActiveArPlane.gameObject.transform.up != InsLoader.transform.up)
-                InsLoader.transform.up = ActiveArPlane.gameObject.transform.up;
+            if (ActiveTrackableId != null)
+            {
+                ActiveArPlane = PlaneManager.GetPlane(ActiveTrackableId.Value);
+                if (ActiveArPlane.gameObject.transform.up != InsLoader.transform.up)
+                    InsLoader.transform.up = ActiveArPlane.gameObject.transform.up;
+            }
+        }
+        catch
+        {
+            Debug.Log("DEBUG: Something went wrong matching the normales!");
         }
     }
 }

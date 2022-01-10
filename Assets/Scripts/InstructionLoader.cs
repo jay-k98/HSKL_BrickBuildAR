@@ -82,7 +82,7 @@ public class InstructionLoader : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        DebugRotation();
     }
 
     private string[] PartsExcept(string[] Base, string[] Diff)
@@ -353,6 +353,13 @@ public class InstructionLoader : MonoBehaviour
         Slider.interactable = true;
         yield return new WaitForSeconds(0.1f);
 
+    }
+
+    private void DebugRotation()
+    {
+        TMPro.TextMeshProUGUI DebugText = GameObject.Find("DebugText").GetComponent<TMPro.TextMeshProUGUI>();
+        Vector3 Rot = InsLoader.transform.rotation.eulerAngles;
+        DebugText.text = $"Debug:\nRotX {Rot.x}\nRotY {Rot.y}\nRotZ {Rot.z}";
     }
 
     private void ClearPanel()

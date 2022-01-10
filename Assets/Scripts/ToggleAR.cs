@@ -30,7 +30,14 @@ public class ToggleAR : MonoBehaviour
     void Start()
     {
         ButtonToggle = GameObject.Find("ButtonToggleAR").GetComponent<Button>();
-        BackgroundMeshRenderer = GameObject.Find("Background").GetComponent<MeshRenderer>();
+        try
+        {
+            BackgroundMeshRenderer = GameObject.Find("Background").GetComponent<MeshRenderer>();
+        }
+        catch
+        {
+            Debug.Log("DEBUG: Can't Retrieve MeshRenderer of Background!");
+        }
     }
 
     // Update is called once per frame
@@ -43,7 +50,14 @@ public class ToggleAR : MonoBehaviour
         IsActive = !IsActive;
         if (IsActive)
         {
-            BackgroundMeshRenderer.enabled = false;
+            try
+            {
+                BackgroundMeshRenderer.enabled = false;
+            }
+            catch
+            {
+                Debug.Log("DEBUG: Can't disable MeshRenderer!");
+            }
             GameObject.Find("AR Session Origin").GetComponent<DragAR>().enabled = true;
             InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = false;
             ResetPos = InstructionLoader.transform.position;
@@ -55,7 +69,14 @@ public class ToggleAR : MonoBehaviour
         }
         else
         {
-            BackgroundMeshRenderer.enabled = true;
+            try
+            {
+                BackgroundMeshRenderer.enabled = true;
+            }
+            catch
+            {
+                Debug.Log("DEBUG: Can't enable MeshRenderer!");
+            }
             GameObject.Find("AR Session Origin").GetComponent<DragAR>().enabled = false;
             InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = true;
             InstructionLoader.transform.localScale = ScaleBlueprint;
