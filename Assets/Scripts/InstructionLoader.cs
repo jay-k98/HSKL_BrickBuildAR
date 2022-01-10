@@ -5,6 +5,7 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.XR.ARFoundation;
 
 public class InstructionLoader : MonoBehaviour
 {
@@ -20,10 +21,10 @@ public class InstructionLoader : MonoBehaviour
     public Color ColorInactive = new Color(.5f, .5f, .5f, .5f);
     [HideInInspector]
     public string[][] Instructions { get; set; }
-    [HideInInspector]
 
     private Dictionary<string, string> InventoryStepRelation = new Dictionary<string, string>();
     private Dictionary<string, Dictionary<string, Dictionary<string, string>>> Instr = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
+
     private Button ButtonNext;
     private Button ButtonLast;
     private Slider Slider;
@@ -31,14 +32,13 @@ public class InstructionLoader : MonoBehaviour
     private GameObject TextStepCounter;
     private GameObject InsLoader;
     private GameObject Panel;
+    private ToggleAR ToggleAr;
+    private DragAR DragAr;
 
     private string ActiveInventoryKey = "";
     private int StepNumber = 0;
     private int StepCount = 0;
-
     private bool ButtonLocked = false;
-    //private bool OverrideSmoothing = false;
-
 
     public void OnSliderDrag()
     {
@@ -59,9 +59,12 @@ public class InstructionLoader : MonoBehaviour
         ButtonNext = GameObject.Find("Canvas/ButtonNext").GetComponent<Button>();
         ButtonLast = GameObject.Find("Canvas/ButtonLast").GetComponent<Button>();
         TextStepCounter = GameObject.Find("Canvas/StepCounter");
+        Slider = GameObject.Find("Canvas/Slider").GetComponent<Slider>();
+        ToggleAr = GameObject.Find("Canvas/ButtonToggleAR").GetComponent<ToggleAR>();
+        DragAr = GameObject.Find("AR Session Origin").GetComponent<DragAR>();
+
         ButtonNext.image.color = ColorActive;
         ButtonLast.image.color = ColorActive;
-        Slider = GameObject.Find("Canvas/Slider").GetComponent<Slider>();
 
         Instr = InstructionParser.ParseInstructionsYaml($"Instructions/YAML/{Filename}");
         foreach (string Key in Instr["inventory"].Keys)
@@ -76,6 +79,7 @@ public class InstructionLoader : MonoBehaviour
         Slider.maxValue = StepCount - 1;
         Slider.minValue = 0;
         StepNumber = 0;
+
         RenderStep(false);
     }
 
@@ -83,6 +87,7 @@ public class InstructionLoader : MonoBehaviour
     void Update()
     {
         DebugRotation();
+
     }
 
     private string[] PartsExcept(string[] Base, string[] Diff)
@@ -152,8 +157,8 @@ public class InstructionLoader : MonoBehaviour
                 if (OverrideSmoothing || Step.ContainsKey("part") || (Step.ContainsKey("smoothing") && (Step["smoothing"] == "0")))
                     InsLoader.transform.rotation = Quaternion.Euler(RotView);
                 // Animated Rotation
-                else {
-                    RotView += InsLoader.transform.rotation.eulerAngles;
+                else
+                {
                     RotateView(InsLoader.transform.rotation.eulerAngles, RotView, 1.0f);
                 }
             }
@@ -252,7 +257,7 @@ public class InstructionLoader : MonoBehaviour
                     Part.transform.localRotation = Quaternion.Euler(Rot);
                 }
 
-                ToggleAR ToggleAr = GameObject.Find("Canvas/ButtonToggleAR").GetComponent<ToggleAR>();
+                
                 if (ToggleAr.IsActive)
                 {
                     Part.transform.localScale = Vector3.one;
@@ -333,6 +338,10 @@ public class InstructionLoader : MonoBehaviour
 
     private void RotateView(Vector3 RotateFrom, Vector3 RotateTo, float SmoothingFactor)
     {
+        if (ToggleAr.IsActive)
+        {
+            
+        }
         StartCoroutine(RotateViewAnimation(Quaternion.Euler(RotateFrom), Quaternion.Euler(RotateTo), SmoothingFactor));
     }
 
@@ -359,7 +368,15 @@ public class InstructionLoader : MonoBehaviour
     {
         TMPro.TextMeshProUGUI DebugText = GameObject.Find("DebugText").GetComponent<TMPro.TextMeshProUGUI>();
         Vector3 Rot = InsLoader.transform.rotation.eulerAngles;
-        DebugText.text = $"Debug:\nRotX {Rot.x}\nRotY {Rot.y}\nRotZ {Rot.z}";
+        string Message = $"Debug:\nRotX {Rot.x}\nRotY {Rot.y}\nRotZ {Rot.z}";
+        if (DragAr.ActiveTrackableId != null)
+        {
+
+            ARPlaneManager PlaneManager = GameObject.Find("AR Session Origin").GetComponent<ARPlaneManager>();
+            ARPlane ActiveArPlane = PlaneManager.GetPlane(DragAr.ActiveTrackableId.Value);
+            Message += $"\nPlaneNormal: {ActiveArPlane.gameObject.transform.up}";
+        }
+        DebugText.text = Message;
     }
 
     private void ClearPanel()
@@ -377,11 +394,15 @@ public class InstructionLoader : MonoBehaviour
         {
             ButtonNext.image.color = ColorInactive;
             ButtonLast.image.color = ColorInactive;
+            ButtonNext.enabled = false;
+            ButtonLast.enabled = false;
         }
         else
         {
             ButtonNext.image.color = ColorActive;
             ButtonLast.image.color = ColorActive;
+            ButtonNext.enabled = true;
+            ButtonLast.enabled = true;
         }
     }
 

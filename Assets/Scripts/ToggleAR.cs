@@ -23,8 +23,11 @@ public class ToggleAR : MonoBehaviour
     public Vector3 ScaleBlueprint;
     private Vector3 ResetPos;
 
+    private Vector3 BackgroundPos;
+    private Vector3 BackgroundRot;
+    private Vector3 BackgroundScale;
+
     private Vector3 ResetNormale;
-    private MeshRenderer BackgroundMeshRenderer;
     // Start is called before the first frame update
 
     void Start()
@@ -32,11 +35,14 @@ public class ToggleAR : MonoBehaviour
         ButtonToggle = GameObject.Find("ButtonToggleAR").GetComponent<Button>();
         try
         {
-            BackgroundMeshRenderer = GameObject.Find("Background").GetComponent<MeshRenderer>();
+            GameObject Background = GameObject.Find("Background");
+            BackgroundPos = Background.transform.position;
+            BackgroundRot = Background.transform.rotation.eulerAngles;
+            BackgroundScale = Background.transform.localScale;
         }
         catch
         {
-            Debug.Log("DEBUG: Can't Retrieve MeshRenderer of Background!");
+            Debug.Log("DEBUG: Can't Retrieve GameObject \"Background\"!");
         }
     }
 
@@ -52,11 +58,13 @@ public class ToggleAR : MonoBehaviour
         {
             try
             {
-                BackgroundMeshRenderer.enabled = false;
+                // GameObject Background = GameObject.Find("Background");
+                foreach (var bg in GameObject.FindGameObjectsWithTag("BackgroundTag"))
+                    Destroy(bg);
             }
             catch
             {
-                Debug.Log("DEBUG: Can't disable MeshRenderer!");
+                Debug.Log("DEBUG: Can't destroy Background!");
             }
             GameObject.Find("AR Session Origin").GetComponent<DragAR>().enabled = true;
             InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = false;
@@ -71,13 +79,23 @@ public class ToggleAR : MonoBehaviour
         {
             try
             {
-                BackgroundMeshRenderer.enabled = true;
+
+                GameObject Background = Instantiate(Resources.Load("Models/Components/Background", typeof(GameObject))) as GameObject;
+                Background.name = "Background";
+                Background.tag = "BackgroundTag";
+                Background.transform.position = BackgroundPos;
+                Background.transform.rotation = Quaternion.Euler(BackgroundRot);
+                Background.transform.localScale = BackgroundScale;
+                Material Mat = Resources.Load("Materials/BackgroundMat", typeof(Material)) as Material;
+                Background.GetComponent<MeshRenderer>().material = Mat;
             }
             catch
             {
-                Debug.Log("DEBUG: Can't enable MeshRenderer!");
+                Debug.Log("DEBUG: Can't instantiate Background!");
             }
-            GameObject.Find("AR Session Origin").GetComponent<DragAR>().enabled = false;
+            DragAR DragAr = GameObject.Find("AR Session Origin").GetComponent<DragAR>();
+            DragAr.ActiveTrackableId = null;
+            DragAr.enabled = false;
             InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = true;
             InstructionLoader.transform.localScale = ScaleBlueprint;
             InstructionLoader.transform.position = ResetPos;

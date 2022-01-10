@@ -17,10 +17,13 @@ public class DragAR : MonoBehaviour
 
     private ARRaycastManager _arRayCastManager;
 
-    private TrackableId? ActiveTrackableId = null;
+    [HideInInspector]
+    public TrackableId? ActiveTrackableId = null;
     private ARPlaneManager PlaneManager;
     private ARPlane ActiveArPlane;
     private GameObject InsLoader;
+
+    private ToggleAR ToggleAr;
 
     static List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
@@ -37,6 +40,7 @@ public class DragAR : MonoBehaviour
         {
             Debug.Log("DEBUG: Can't find PlaneManager!");
         }
+        ToggleAr = GameObject.Find("Canvas/ButtonToggleAR").GetComponent<ToggleAR>();
     }
 
     bool TryGetTouchPosition(out Vector2 touchPosition)
