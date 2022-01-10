@@ -17,12 +17,19 @@ public class DragAR : MonoBehaviour
 
     private ARRaycastManager _arRayCastManager;
 
+    private TrackableId? ActiveTrackableId = null;
+    private ARPlaneManager PlaneManager;
+    private ARPlane ActiveArPlane;
+    private GameObject InsLoader;
+
     static List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
 
     private void Awake()
     {
         _arRayCastManager = GetComponent<ARRaycastManager>();
+        PlaneManager = GameObject.Find("AR Session Origin").GetComponent<ARPlaneManager>();
+        InsLoader = GameObject.Find("InstructionLoader");
     }
 
     bool TryGetTouchPosition(out Vector2 touchPosition)
@@ -48,8 +55,13 @@ public class DragAR : MonoBehaviour
             if (_arRayCastManager.Raycast(touchPosition, hits, TrackableType.PlaneWithinPolygon))
             {
                 var hitPose = hits[0].pose;
+                ActiveTrackableId =  hits[0].trackableId;
 
                 spawnedObject.transform.position = hitPose.position;
+                ActiveArPlane = PlaneManager.GetPlane(ActiveTrackableId.Value);
+                if (ActiveArPlane.gameObject.transform.up != InsLoader.transform.up)
+                    InsLoader.transform.up = ActiveArPlane.gameObject.transform.up;
+                
 
             }
         }

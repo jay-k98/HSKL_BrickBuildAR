@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.XR.ARFoundation;
+using UnityEngine.XR.ARSubsystems;
 
 public class ToggleAR : MonoBehaviour
 {
@@ -20,6 +22,8 @@ public class ToggleAR : MonoBehaviour
     public Vector3 ScaleAR;
     public Vector3 ScaleBlueprint;
     private Vector3 ResetPos;
+
+    private Vector3 ResetNormale;
     // Start is called before the first frame update
 
     void Start()
@@ -30,7 +34,6 @@ public class ToggleAR : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
     }
 
     public void ToggleActivityAR()
@@ -41,6 +44,7 @@ public class ToggleAR : MonoBehaviour
             GameObject.Find("AR Session Origin").GetComponent<DragAR>().enabled = true;
             InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = false;
             ResetPos = InstructionLoader.transform.position;
+            ResetNormale = InstructionLoader.transform.up;
             InstructionLoader.transform.localScale = ScaleAR;
             cameraNoAR.SetActive(false);
             cameraAR.SetActive(true);
@@ -52,6 +56,7 @@ public class ToggleAR : MonoBehaviour
             InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = true;
             InstructionLoader.transform.localScale = ScaleBlueprint;
             InstructionLoader.transform.position = ResetPos;
+            InstructionLoader.transform.up = ResetNormale;
             cameraAR.SetActive(false);
             cameraNoAR.SetActive(true);
             ButtonToggle.image.sprite = ArIsInactive;
