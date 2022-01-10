@@ -152,8 +152,10 @@ public class InstructionLoader : MonoBehaviour
                 if (OverrideSmoothing || Step.ContainsKey("part") || (Step.ContainsKey("smoothing") && (Step["smoothing"] == "0")))
                     InsLoader.transform.rotation = Quaternion.Euler(RotView);
                 // Animated Rotation
-                else
+                else {
+                    RotView += InsLoader.transform.rotation.eulerAngles;
                     RotateView(InsLoader.transform.rotation.eulerAngles, RotView, 1.0f);
+                }
             }
         }
 

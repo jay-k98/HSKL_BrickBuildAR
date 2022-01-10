@@ -24,11 +24,13 @@ public class ToggleAR : MonoBehaviour
     private Vector3 ResetPos;
 
     private Vector3 ResetNormale;
+    private MeshRenderer BackgroundMeshRenderer;
     // Start is called before the first frame update
 
     void Start()
     {
         ButtonToggle = GameObject.Find("ButtonToggleAR").GetComponent<Button>();
+        BackgroundMeshRenderer = GameObject.Find("Background").GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
@@ -41,6 +43,7 @@ public class ToggleAR : MonoBehaviour
         IsActive = !IsActive;
         if (IsActive)
         {
+            BackgroundMeshRenderer.enabled = false;
             GameObject.Find("AR Session Origin").GetComponent<DragAR>().enabled = true;
             InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = false;
             ResetPos = InstructionLoader.transform.position;
@@ -52,6 +55,7 @@ public class ToggleAR : MonoBehaviour
         }
         else
         {
+            BackgroundMeshRenderer.enabled = true;
             GameObject.Find("AR Session Origin").GetComponent<DragAR>().enabled = false;
             InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = true;
             InstructionLoader.transform.localScale = ScaleBlueprint;
