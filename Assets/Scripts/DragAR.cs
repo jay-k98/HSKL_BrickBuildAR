@@ -62,8 +62,11 @@ public class DragAR : MonoBehaviour
 
             }
         }
-        ActiveArPlane = PlaneManager.GetPlane(ActiveTrackableId.Value);
-        if (ActiveArPlane.gameObject.transform.up != InsLoader.transform.up)
-            InsLoader.transform.up = ActiveArPlane.gameObject.transform.up;
+        if (ActiveTrackableId != null)
+        {
+            ActiveArPlane = PlaneManager.GetPlane(ActiveTrackableId.Value);
+            if (ActiveArPlane.gameObject.transform.up != InsLoader.transform.up)
+                InsLoader.transform.up = ActiveArPlane.gameObject.transform.up;
+        }
     }
 }
