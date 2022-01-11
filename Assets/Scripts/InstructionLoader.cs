@@ -130,15 +130,13 @@ public class InstructionLoader : MonoBehaviour
         Dictionary<string, string> Step = Steps[StepId];
 
         // Set Height of InstructionLoader if required
-        if (Step.ContainsKey("height_y"))
+        if (Step.ContainsKey("height_y") && !ToggleAr.IsActive)
         {
             float NewHeight = float.Parse(Step["height_y"], CultureInfo.InvariantCulture);
             if (NewHeight - InsLoader.transform.position.y > 0.00001f)
             {
                 Vector3 Pos = InsLoader.transform.position;
                 Pos.y = NewHeight;
-                if (ToggleAr.IsActive)
-                    Pos.y = 0;
                 InsLoader.transform.position = Pos;
             }
         }

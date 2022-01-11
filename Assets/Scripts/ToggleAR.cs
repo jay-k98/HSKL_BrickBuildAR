@@ -72,7 +72,6 @@ public class ToggleAR : MonoBehaviour
             {
                 Debug.Log("DEBUG: Can't destroy Background!");
             }
-            GameObject.Find("AR Session Origin").GetComponent<DragAR>().enabled = true;
             InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = false;
             ResetPos = InstructionLoader.transform.position;
             ResetNormale = InstructionLoader.transform.up;
@@ -106,6 +105,7 @@ public class ToggleAR : MonoBehaviour
                 ArSessionOrigin.GetComponent<ARSessionOrigin>().enabled = true;
                 ArSessionOrigin.GetComponent<ARPlaneManager>().enabled = true;
                 ArSessionOrigin.GetComponent<ARRaycastManager>().enabled = true;
+                ArSessionOrigin.GetComponent<DragAR>().enabled = true;
             }
             catch
             {
