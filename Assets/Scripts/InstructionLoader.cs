@@ -44,6 +44,16 @@ public class InstructionLoader : MonoBehaviour
 
     public void OnSliderDrag()
     {
+        RenderSliderStep();
+    }
+
+    public void OnSliderPointerClick()
+    {
+        RenderSliderStep();
+    }
+
+    public void RenderSliderStep()
+    {
         int TempStepNumber = (int)Slider.value;
         if (StepNumber != TempStepNumber)
         {
