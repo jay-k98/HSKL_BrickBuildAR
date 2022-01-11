@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
@@ -19,11 +18,6 @@ public class DragAR : MonoBehaviour
 
     [HideInInspector]
     public TrackableId? ActiveTrackableId = null;
-    private ARPlaneManager PlaneManager;
-    private ARPlane ActiveArPlane;
-    private GameObject InsLoader;
-
-    private ToggleAR ToggleAr;
 
     static List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
@@ -31,16 +25,6 @@ public class DragAR : MonoBehaviour
     private void Awake()
     {
         _arRayCastManager = GetComponent<ARRaycastManager>();
-        InsLoader = GameObject.Find("InstructionLoader");
-        try
-        {
-            PlaneManager = GameObject.Find("AR Session Origin").GetComponent<ARPlaneManager>();
-        }
-        catch
-        {
-            Debug.Log("DEBUG: Can't find PlaneManager!");
-        }
-        ToggleAr = GameObject.Find("Canvas/ButtonToggleAR").GetComponent<ToggleAR>();
     }
 
     bool TryGetTouchPosition(out Vector2 touchPosition)
@@ -68,29 +52,7 @@ public class DragAR : MonoBehaviour
                 var hitPose = hits[0].pose;
 
                 spawnedObject.transform.position = hitPose.position;
-
-                //try
-                //{
-                //    ActiveTrackableId = hits[0].trackableId;
-                //}
-                //catch
-                //{
-                //    Debug.Log("DEBUG: Can't get TrackableId!");
-                //}
             }
         }
-        //try
-        //{
-        //    if (ActiveTrackableId != null)
-        //    {
-        //        ActiveArPlane = PlaneManager.GetPlane(ActiveTrackableId.Value);
-        //        if (ActiveArPlane.gameObject.transform.up != InsLoader.transform.up)
-        //            InsLoader.transform.up = ActiveArPlane.gameObject.transform.up;
-        //    }
-        //}
-        //catch
-        //{
-        //    Debug.Log("DEBUG: Something went wrong matching the normales!");
-        //}
     }
 }

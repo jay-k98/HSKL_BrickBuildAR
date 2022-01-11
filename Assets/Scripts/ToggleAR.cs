@@ -1,10 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using UnityEngine.XR.ARFoundation;
-using UnityEngine.XR.ARSubsystems;
+using System.Globalization;
 
 public class ToggleAR : MonoBehaviour
 {
@@ -36,17 +34,11 @@ public class ToggleAR : MonoBehaviour
     void Start()
     {
         ButtonToggle = GameObject.Find("ButtonToggleAR").GetComponent<Button>();
-        try
-        {
-            GameObject Background = GameObject.Find("Background");
-            BackgroundPos = Background.transform.position;
-            BackgroundRot = Background.transform.rotation.eulerAngles;
-            BackgroundScale = Background.transform.localScale;
-        }
-        catch
-        {
-            Debug.Log("DEBUG: Can't Retrieve GameObject \"Background\"!");
-        }
+
+        GameObject Background = GameObject.Find("Background");
+        BackgroundPos = Background.transform.position;
+        BackgroundRot = Background.transform.rotation.eulerAngles;
+        BackgroundScale = Background.transform.localScale;
 
         ArSessionOrigin = GameObject.Find("AR Session Origin");
         ArSession = GameObject.Find("AR Session");
@@ -62,16 +54,10 @@ public class ToggleAR : MonoBehaviour
         IsActive = !IsActive;
         if (IsActive)
         {
-            try
-            {
-                // GameObject Background = GameObject.Find("Background");
-                foreach (var bg in GameObject.FindGameObjectsWithTag("BackgroundTag"))
-                    Destroy(bg);
-            }
-            catch
-            {
-                Debug.Log("DEBUG: Can't destroy Background!");
-            }
+            // GameObject Background = GameObject.Find("Background");
+            foreach (var bg in GameObject.FindGameObjectsWithTag("BackgroundTag"))
+                Destroy(bg);
+
             InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = false;
             ResetPos = InstructionLoader.transform.position;
             ResetNormale = InstructionLoader.transform.up;
@@ -80,64 +66,48 @@ public class ToggleAR : MonoBehaviour
             Vector3 Pos = InstructionLoader.transform.position;
             Pos.y = -10000.0f;
             InstructionLoader.transform.position = Pos;
-            try
-            {
-                cameraNoAR.SetActive(false);
-                cameraAR.SetActive(true);
-            }
-            catch
-            {
-                Debug.Log("DEBUG: Cant switch Cameras");
-            }
-            try
-            {
-                ArSession.SetActive(true);
-                ArSession.GetComponent<ARSession>().enabled = true;
-                ArSession.GetComponent<ARInputManager>().enabled = true;
-            }
-            catch
-            {
-                Debug.Log("DEBUG: Cant Activate AR Session OR added Scripts");
-            }
-            try
-            {
-                ArSessionOrigin.SetActive(true);
-                ArSessionOrigin.GetComponent<ARSessionOrigin>().enabled = true;
-                ArSessionOrigin.GetComponent<ARPlaneManager>().enabled = true;
-                ArSessionOrigin.GetComponent<ARRaycastManager>().enabled = true;
-                ArSessionOrigin.GetComponent<DragAR>().enabled = true;
-            }
-            catch
-            {
-                Debug.Log("DEBUG: Cant Activate AR Session Origin OR added Scripts");
-            }
 
+            cameraNoAR.SetActive(false);
+            cameraAR.SetActive(true);
+
+            ArSession.SetActive(true);
+            ArSession.GetComponent<ARSession>().enabled = true;
+            ArSession.GetComponent<ARInputManager>().enabled = true;
+
+            ArSessionOrigin.SetActive(true);
+            ArSessionOrigin.GetComponent<ARSessionOrigin>().enabled = true;
+            ArSessionOrigin.GetComponent<ARPlaneManager>().enabled = true;
+            ArSessionOrigin.GetComponent<ARRaycastManager>().enabled = true;
+            ArSessionOrigin.GetComponent<DragAR>().enabled = true;
 
             ButtonToggle.image.sprite = ArIsActive;
+
         }
         else
         {
-            try
-            {
+            GameObject Background = Instantiate(Resources.Load("Models/Components/Background", typeof(GameObject))) as GameObject;
+            Background.name = "Background";
+            Background.tag = "BackgroundTag";
+            Background.transform.position = BackgroundPos;
+            Background.transform.rotation = Quaternion.Euler(BackgroundRot);
+            Background.transform.localScale = BackgroundScale;
+            Material Mat = Resources.Load("Materials/BackgroundMat", typeof(Material)) as Material;
+            Background.GetComponent<MeshRenderer>().material = Mat;
 
-                GameObject Background = Instantiate(Resources.Load("Models/Components/Background", typeof(GameObject))) as GameObject;
-                Background.name = "Background";
-                Background.tag = "BackgroundTag";
-                Background.transform.position = BackgroundPos;
-                Background.transform.rotation = Quaternion.Euler(BackgroundRot);
-                Background.transform.localScale = BackgroundScale;
-                Material Mat = Resources.Load("Materials/BackgroundMat", typeof(Material)) as Material;
-                Background.GetComponent<MeshRenderer>().material = Mat;
-            }
-            catch
-            {
-                Debug.Log("DEBUG: Can't instantiate Background!");
-            }
             DragAR DragAr = ArSessionOrigin.GetComponent<DragAR>();
             DragAr.ActiveTrackableId = null;
             DragAr.enabled = false;
             InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = true;
             InstructionLoader.transform.localScale = ScaleBlueprint;
+            InstructionLoader InsLoaderScript = GameObject.Find("InstructionLoader").GetComponent<InstructionLoader>();
+
+            int StepNbr = InsLoaderScript.StepNumber;
+            Dictionary<string, Dictionary<string, string>> Steps = InsLoaderScript.Instr["steps"];
+            string StepId = $"&id{StepNbr:D3}";
+            Dictionary<string, string> Step = Steps[StepId];
+            if (Step.ContainsKey("height_y"))
+                ResetPos.y = float.Parse(Step["height_y"], CultureInfo.InvariantCulture);
+
             InstructionLoader.transform.position = ResetPos;
             InstructionLoader.transform.up = ResetNormale;
             cameraAR.SetActive(false);

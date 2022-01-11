@@ -21,9 +21,12 @@ public class InstructionLoader : MonoBehaviour
     public Color ColorInactive = new Color(.5f, .5f, .5f, .5f);
     [HideInInspector]
     public string[][] Instructions { get; set; }
+    [HideInInspector]
+    public int StepNumber = 0;
+    [HideInInspector]
+    public Dictionary<string, Dictionary<string, Dictionary<string, string>>> Instr = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
 
     private Dictionary<string, string> InventoryStepRelation = new Dictionary<string, string>();
-    private Dictionary<string, Dictionary<string, Dictionary<string, string>>> Instr = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
 
     private Button ButtonNext;
     private Button ButtonLast;
@@ -36,7 +39,6 @@ public class InstructionLoader : MonoBehaviour
     private DragAR DragAr;
 
     private string ActiveInventoryKey = "";
-    private int StepNumber = 0;
     private int StepCount = 0;
     private bool ButtonLocked = false;
 
@@ -314,23 +316,6 @@ public class InstructionLoader : MonoBehaviour
             InvComp.transform.GetChild(0).transform.localPosition = new Vector3(0, yOffset, -1.25f);
             int ScaleFactor = 40;
             InvComp.transform.GetChild(0).transform.localScale = new Vector3(ScaleFactor, ScaleFactor, ScaleFactor);
-
-            //GameObject InvPartParent = Instantiate(Resources.Load("UIElements/InvPartParent", typeof(GameObject))) as GameObject;
-            //InvPartParent.transform.parent = Panel.transform;
-            //InvPartParent.layer = 5;
-            //InvPartParent.transform.localPosition = Vector3.zero;
-
-            //GameObject Comp = Instantiate(Resources.Load($"Models/Components/{CompName}", typeof(GameObject))) as GameObject;
-            //Comp.layer = 5;
-            //for (int i = 0; i < Comp.transform.childCount; i++)
-            //{
-            //    Comp.transform.GetChild(i).gameObject.layer = 5;
-            //}
-            //Comp.transform.parent = InvPartParent.transform;
-            //Comp.transform.localPosition = new Vector3(0, 0, -1.25f);
-            //Comp.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-            //int ScaleFactor = 40;
-            //Comp.transform.localScale = new Vector3(ScaleFactor, ScaleFactor, ScaleFactor);
 
             Counter++;
         }
