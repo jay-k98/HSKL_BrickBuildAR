@@ -78,7 +78,7 @@ public class ToggleAR : MonoBehaviour
             InstructionLoader.transform.localScale = ScaleAR;
 
             Vector3 Pos = InstructionLoader.transform.position;
-            Pos.y = 0.0f;
+            Pos.y = -10000.0f;
             InstructionLoader.transform.position = Pos;
             try
             {
