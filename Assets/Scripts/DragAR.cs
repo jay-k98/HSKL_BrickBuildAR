@@ -69,28 +69,28 @@ public class DragAR : MonoBehaviour
 
                 spawnedObject.transform.position = hitPose.position;
 
-                try
-                {
-                    ActiveTrackableId = hits[0].trackableId;
-                }
-                catch
-                {
-                    Debug.Log("DEBUG: Can't get TrackableId!");
-                }
+                //try
+                //{
+                //    ActiveTrackableId = hits[0].trackableId;
+                //}
+                //catch
+                //{
+                //    Debug.Log("DEBUG: Can't get TrackableId!");
+                //}
             }
         }
-        try
-        {
-            if (ActiveTrackableId != null)
-            {
-                ActiveArPlane = PlaneManager.GetPlane(ActiveTrackableId.Value);
-                if (ActiveArPlane.gameObject.transform.up != InsLoader.transform.up)
-                    InsLoader.transform.up = ActiveArPlane.gameObject.transform.up;
-            }
-        }
-        catch
-        {
-            Debug.Log("DEBUG: Something went wrong matching the normales!");
-        }
+        //try
+        //{
+        //    if (ActiveTrackableId != null)
+        //    {
+        //        ActiveArPlane = PlaneManager.GetPlane(ActiveTrackableId.Value);
+        //        if (ActiveArPlane.gameObject.transform.up != InsLoader.transform.up)
+        //            InsLoader.transform.up = ActiveArPlane.gameObject.transform.up;
+        //    }
+        //}
+        //catch
+        //{
+        //    Debug.Log("DEBUG: Something went wrong matching the normales!");
+        //}
     }
 }
