@@ -81,16 +81,36 @@ public class ToggleAR : MonoBehaviour
             Vector3 Pos = InstructionLoader.transform.position;
             Pos.y = 0.0f;
             InstructionLoader.transform.position = Pos;
-
-            cameraNoAR.SetActive(false);
-            cameraAR.SetActive(true);
-            ArSession.SetActive(true);
-            ArSessionOrigin.SetActive(true);
-            ArSession.GetComponent<ARSession>().enabled = true;
-            ArSession.GetComponent<ARInputManager>().enabled = true;
-            ArSessionOrigin.GetComponent<ARSessionOrigin>().enabled = true;
-            ArSessionOrigin.GetComponent<ARPlaneManager>().enabled = true;
-            ArSessionOrigin.GetComponent<ARRaycastManager>().enabled = true;
+            try
+            {
+                cameraNoAR.SetActive(false);
+                cameraAR.SetActive(true);
+            }
+            catch
+            {
+                Debug.Log("DEBUG: Cant switch Cameras");
+            }
+            try
+            {
+                ArSession.SetActive(true);
+                ArSession.GetComponent<ARSession>().enabled = true;
+                ArSession.GetComponent<ARInputManager>().enabled = true;
+            }
+            catch
+            {
+                Debug.Log("DEBUG: Cant Activate AR Session OR added Scripts");
+            }
+            try
+            {
+                ArSessionOrigin.SetActive(true);
+                ArSessionOrigin.GetComponent<ARSessionOrigin>().enabled = true;
+                ArSessionOrigin.GetComponent<ARPlaneManager>().enabled = true;
+                ArSessionOrigin.GetComponent<ARRaycastManager>().enabled = true;
+            }
+            catch
+            {
+                Debug.Log("DEBUG: Cant Activate AR Session Origin OR added Scripts");
+            }
 
 
             ButtonToggle.image.sprite = ArIsActive;
