@@ -136,9 +136,9 @@ public class InstructionLoader : MonoBehaviour
             if (NewHeight - InsLoader.transform.position.y > 0.00001f)
             {
                 Vector3 Pos = InsLoader.transform.position;
-                if (DragAr.ActiveTrackableId != null)
-                    NewHeight /= 40.0f;
                 Pos.y = NewHeight;
+                if (ToggleAr.IsActive)
+                    Pos.y = 0;
                 InsLoader.transform.position = Pos;
             }
         }

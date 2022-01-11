@@ -73,7 +73,7 @@ public class ToggleAR : MonoBehaviour
             InstructionLoader.transform.localScale = ScaleAR;
 
             Vector3 Pos = InstructionLoader.transform.position;
-            Pos.y /= 40.0f;
+            Pos.y = 0.0f;
             InstructionLoader.transform.position = Pos;
 
             cameraNoAR.SetActive(false);
