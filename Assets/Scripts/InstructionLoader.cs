@@ -86,7 +86,7 @@ public class InstructionLoader : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        DebugRotation();
+        RenderDebugText();
 
     }
 
@@ -136,6 +136,8 @@ public class InstructionLoader : MonoBehaviour
             if (NewHeight - InsLoader.transform.position.y > 0.00001f)
             {
                 Vector3 Pos = InsLoader.transform.position;
+                if (DragAr.ActiveTrackableId != null)
+                    NewHeight /= 40.0f;
                 Pos.y = NewHeight;
                 InsLoader.transform.position = Pos;
             }
@@ -364,11 +366,13 @@ public class InstructionLoader : MonoBehaviour
 
     }
 
-    private void DebugRotation()
+    private void RenderDebugText()
     {
         TMPro.TextMeshProUGUI DebugText = GameObject.Find("DebugText").GetComponent<TMPro.TextMeshProUGUI>();
         Vector3 Rot = InsLoader.transform.rotation.eulerAngles;
-        string Message = $"Debug:\nRotX {Rot.x}\nRotY {Rot.y}\nRotZ {Rot.z}";
+        Vector3 Pos = InsLoader.transform.position;
+        string Message = $"RotX {Rot.x}\nRotY {Rot.y}\nRotZ {Rot.z}";
+        Message += $"\nPosX {Pos.x}\nPosY {Pos.y}\nPosZ {Pos.z}";
         if (DragAr.ActiveTrackableId != null)
         {
 

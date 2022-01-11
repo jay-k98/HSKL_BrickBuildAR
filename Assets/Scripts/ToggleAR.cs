@@ -71,6 +71,11 @@ public class ToggleAR : MonoBehaviour
             ResetPos = InstructionLoader.transform.position;
             ResetNormale = InstructionLoader.transform.up;
             InstructionLoader.transform.localScale = ScaleAR;
+
+            Vector3 Pos = InstructionLoader.transform.position;
+            Pos.y /= 40.0f;
+            InstructionLoader.transform.position = Pos;
+
             cameraNoAR.SetActive(false);
             cameraAR.SetActive(true);
             ButtonToggle.image.sprite = ArIsActive;
