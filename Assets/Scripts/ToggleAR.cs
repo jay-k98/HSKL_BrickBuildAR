@@ -77,6 +77,17 @@ public class ToggleAR : MonoBehaviour
             InstructionLoader.transform.position = Pos;
 
             cameraNoAR.SetActive(false);
+            GameObject ArSessionOrigin = GameObject.Find("AR Session Origin");
+            GameObject ArSession = GameObject.Find("AR Session");
+            ArSession.SetActive(true);
+            ArSessionOrigin.SetActive(true);
+            ArSession.GetComponent<ARSession>().enabled = true;
+            ArSession.GetComponent<ARInputManager>().enabled = true;
+            ArSessionOrigin.GetComponent<ARSessionOrigin>().enabled = true;
+            ArSessionOrigin.GetComponent<ARPlaneManager>().enabled = true;
+            ArSessionOrigin.GetComponent<ARRaycastManager>().enabled = true;
+
+
             cameraAR.SetActive(true);
             ButtonToggle.image.sprite = ArIsActive;
         }
@@ -98,7 +109,9 @@ public class ToggleAR : MonoBehaviour
             {
                 Debug.Log("DEBUG: Can't instantiate Background!");
             }
-            DragAR DragAr = GameObject.Find("AR Session Origin").GetComponent<DragAR>();
+            GameObject ArSessionOrigin = GameObject.Find("AR Session Origin");
+            GameObject ArSession = GameObject.Find("AR Session");
+            DragAR DragAr = ArSessionOrigin.GetComponent<DragAR>();
             DragAr.ActiveTrackableId = null;
             DragAr.enabled = false;
             InstructionLoader.GetComponent<Lean.Touch.LeanDragTranslate>().enabled = true;
@@ -106,6 +119,9 @@ public class ToggleAR : MonoBehaviour
             InstructionLoader.transform.position = ResetPos;
             InstructionLoader.transform.up = ResetNormale;
             cameraAR.SetActive(false);
+            ArSession.GetComponent<ARSession>().Reset();
+            ArSession.SetActive(false);
+            ArSessionOrigin.SetActive(false);
             cameraNoAR.SetActive(true);
             ButtonToggle.image.sprite = ArIsInactive;
         }
