@@ -23,6 +23,9 @@ public class ToggleAR : MonoBehaviour
     public Vector3 ScaleBlueprint;
     private Vector3 ResetPos;
 
+    private GameObject ArSession;
+    private GameObject ArSessionOrigin;
+
     private Vector3 BackgroundPos;
     private Vector3 BackgroundRot;
     private Vector3 BackgroundScale;
@@ -44,6 +47,9 @@ public class ToggleAR : MonoBehaviour
         {
             Debug.Log("DEBUG: Can't Retrieve GameObject \"Background\"!");
         }
+
+        ArSessionOrigin = GameObject.Find("AR Session Origin");
+        ArSession = GameObject.Find("AR Session");
     }
 
     // Update is called once per frame
@@ -77,8 +83,7 @@ public class ToggleAR : MonoBehaviour
             InstructionLoader.transform.position = Pos;
 
             cameraNoAR.SetActive(false);
-            GameObject ArSessionOrigin = GameObject.Find("AR Session Origin");
-            GameObject ArSession = GameObject.Find("AR Session");
+            cameraAR.SetActive(true);
             ArSession.SetActive(true);
             ArSessionOrigin.SetActive(true);
             ArSession.GetComponent<ARSession>().enabled = true;
@@ -88,7 +93,6 @@ public class ToggleAR : MonoBehaviour
             ArSessionOrigin.GetComponent<ARRaycastManager>().enabled = true;
 
 
-            cameraAR.SetActive(true);
             ButtonToggle.image.sprite = ArIsActive;
         }
         else
@@ -109,8 +113,6 @@ public class ToggleAR : MonoBehaviour
             {
                 Debug.Log("DEBUG: Can't instantiate Background!");
             }
-            GameObject ArSessionOrigin = GameObject.Find("AR Session Origin");
-            GameObject ArSession = GameObject.Find("AR Session");
             DragAR DragAr = ArSessionOrigin.GetComponent<DragAR>();
             DragAr.ActiveTrackableId = null;
             DragAr.enabled = false;
