@@ -98,8 +98,7 @@ public class InstructionLoader : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        RenderDebugText();
-
+        //RenderDebugText();
     }
 
     private string[] PartsExcept(string[] Base, string[] Diff)
