@@ -17,11 +17,17 @@ The greatest 3D Brick instructions you'll ever meet.
 
 ## Project Settings
 
+### Resolution and Presentation
+- Portrait: **false**
+- Portrait Upside Down: **false**
+- Landscape Right: **true**
+- Landscape Left: **true**
+
 ### Player
 - Target Device: **iPhone + iPad**
 - Target minimum iOS version: **12.0**
 - Requires ARKit support: **true**
-- Active inout handling: **Both**
+- Active Input Handling: **Both**
 
 ### XR Plug-in Management
 - Initialize XR on Startup: **true**
