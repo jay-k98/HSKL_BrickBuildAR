@@ -2,6 +2,8 @@
 
 The greatest 3D Brick instructions you'll ever meet.
 
+![Mockup screen of the AR application on an iPad](https://github.com/jay-k98/HSKL_BrickBuildAR/blob/main/Mockup/BrickBuildAR_mockup.png)
+
 ## Required Packages
 
 ### Unity Registry
