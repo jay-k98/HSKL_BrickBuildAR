@@ -33,5 +33,6 @@ The greatest 3D Brick instructions you'll ever meet.
 - Initialize XR on Startup: **true**
 - Plug-in Providers > ARKit: **true**
 
-## Part List
-We used parts from the community run part library [LDraw](https://www.ldraw.org/). The meshes were optimized in Blender and exported as FBX.
+## Parts and Colors
+We used parts from the community run part library [LDraw Parts List](https://www.ldraw.org/cgi-bin/ptlist.cgi). The meshes were optimized in Blender and exported as FBX.
+Official colors can be obtained from [Brickipedia Color Palette](https://brickipedia.fandom.com/wiki/Colour_Palette).
