@@ -32,3 +32,6 @@ The greatest 3D Brick instructions you'll ever meet.
 ### XR Plug-in Management
 - Initialize XR on Startup: **true**
 - Plug-in Providers > ARKit: **true**
+
+## Part List
+We used parts from the community run part library [LDraw](https://www.ldraw.org/). The meshes were optimized in Blender.
