@@ -34,4 +34,4 @@ The greatest 3D Brick instructions you'll ever meet.
 - Plug-in Providers > ARKit: **true**
 
 ## Part List
-We used parts from the community run part library [LDraw](https://www.ldraw.org/). The meshes were optimized in Blender.
+We used parts from the community run part library [LDraw](https://www.ldraw.org/). The meshes were optimized in Blender and exported as FBX.
