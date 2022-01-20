@@ -60,5 +60,3 @@ For components, only the component ID and the position are specified. Specifying
 These steps only contain a rotation vector, to rotate the view and a so called "Smoothing-Factor", which should indicate if the rotation should be animated (value = 1) or not (value = 0).
 
 Furthermore, each building step contains a specification for the position on the y-axis, as well as a rotation vector for the correct alignment in space. The y-axis represents the height of the object in space. Sometimes this is desirable, for example if the object has to be turned upside down.
-
-Translated with www.DeepL.com/Translator (free version)
