@@ -64,3 +64,12 @@ Furthermore, each building step contains a specification for the position on the
 The inventory is listed in the same YAML file as the build steps. An inventory entry contains the required parts or components, as well as their quantity and color. The associated steps are specified under the "steps" parameter.
 
 ![YAML of an inventory entry](https://github.com/jay-k98/HSKL_BrickBuildAR/blob/main/Screens/yaml_inventory_entry.png)
+
+## Future Work
+- Porting for Android using "AR Core"
+- Enable import of own models
+- Realize instructions away from building brick models
+- Use Lidar sensor of iPad Pro (possibly better AR functionality)
+- "Mixed Reality" application for HoloLens
+- Automatically capture the current build step
+- Develop a GUI to construct own instructions of a model
