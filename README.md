@@ -47,11 +47,11 @@ There are different types of build steps:
 
 Single parts are joined together here. Each build step contains the ID of the component, the local position, the rotation of the component, as well as the color of the component.
 
-![YAML of a single part step](https://github.com/jay-k98/HSKL_BrickBuildAR/blob/main/Screens/yaml_part_step.png)
-
 ### Assembling components
 
 For components, only the component ID and the position are specified. Specifying the rotation would be possible like for single parts, but is not required at the moment.
+
+![YAML of a single part step](https://github.com/jay-k98/HSKL_BrickBuildAR/blob/main/Screens/yaml_part_step.png)
 
 ### Rotate view
 
