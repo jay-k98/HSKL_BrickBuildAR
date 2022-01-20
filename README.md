@@ -66,7 +66,7 @@ The inventory is listed in the same YAML file as the build steps. An inventory e
 ![YAML of an inventory entry](https://github.com/jay-k98/HSKL_BrickBuildAR/blob/main/Screens/yaml_inventory_entry.png)
 
 ## Future Work
-- Porting for Android using "AR Core"
+- Android version using "AR Core"
 - Enable import of own models
 - Realize instructions away from building brick models
 - Use Lidar sensor of iPad Pro (possibly better AR functionality)
