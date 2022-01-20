@@ -53,10 +53,14 @@ Single parts are joined together here. Each build step contains the ID of the co
 
 For components, only the component ID and the position are specified. Specifying the rotation would be possible like for single parts, but is not required at the moment.
 
-![YAML of a component step](https://github.com/jay-k98/HSKL_BrickBuildAR/blob/main/Screens/yaml_component_step.png)
-
 ### Rotate view
 
 These steps only contain a rotation vector, to rotate the view and a so called "Smoothing-Factor", which should indicate if the rotation should be animated (value = 1) or not (value = 0).
 
 Furthermore, each building step contains a specification for the position on the y-axis, as well as a rotation vector for the correct alignment in space. The y-axis represents the height of the object in space. Sometimes this is desirable, for example if the object has to be turned upside down.
+
+### Inventory entry
+
+The inventory is listed in the same YAML file as the build steps. An inventory entry contains the required parts or components, as well as their quantity and color. The associated steps are specified under the "steps" parameter.
+
+![YAML of an inventory entry](https://github.com/jay-k98/HSKL_BrickBuildAR/blob/main/Screens/yaml_inventory_entry.png)
